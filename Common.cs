@@ -6368,7 +6368,8 @@ public class ClientRecipeInfo
 public class GameLanguage
 {
     //Client
-    public static string PetMode_Both = "[Pet: Attack and Move]",
+    public static string GroupFinder = "Groupfinder" ,
+                        PetMode_Both = "[Pet: Attack and Move]",
                          PetMode_MoveOnly = "[Pet: Do Not Attack]",
                          PetMode_AttackOnly = "[Pet: Do Not Move]",
                          PetMode_None = "[Pet: Do Not Attack or Move]",

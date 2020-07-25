@@ -67,6 +67,8 @@ namespace Client.MirScenes
 
         public GroupFinderDialog GroupFinderDialog;
         public GroupFinderButtonDialog GroupFinderDialogButton;
+        public GroupFinderFormDialog GroupFinderFormDialog;
+
         public CharacterDuraPanel CharacterDuraPanel;
         public DuraStatusDialog DuraStatusPanel;
         public TradeDialog TradeDialog;
@@ -212,8 +214,10 @@ namespace Client.MirScenes
             DuraStatusPanel = new DuraStatusDialog { Parent = this, Visible = true };
             TradeDialog = new TradeDialog { Parent = this, Visible = false };
             GuestTradeDialog = new GuestTradeDialog { Parent = this, Visible = false };
-            GroupFinderDialogButton = new GroupFinderButtonDialog { Parent = this, Visible = true };
+
             GroupFinderDialog = new GroupFinderDialog { Parent = this, Visible = false };
+            GroupFinderDialogButton = new GroupFinderButtonDialog { Parent = this, Visible = true };
+            GroupFinderFormDialog = new GroupFinderFormDialog { Parent = this, Visible = false };
 
             //SkillBarDialog = new SkillBarDialog { Parent = this, Visible = false };
             SkillBarDialog Bar1 = new SkillBarDialog { Parent = this, Visible = false, BarIndex = 0 };
