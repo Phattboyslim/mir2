@@ -4931,6 +4931,52 @@ namespace Client.MirScenes.Dialogs
             Visible = true;
         }
     }
+    public sealed class GroupFinderButtonDialog : MirImageControl
+    {
+        public MirButton GroupFinderButton;
+
+        public GroupFinderButtonDialog()
+        {
+            Size = new Size(40, 19);
+            Location = new Point((GameScene.Scene.MiniMapDialog.Location.X - 40), 60);
+
+            GroupFinderButton = new MirButton()
+            {
+                Index = 2173,
+                Library = Libraries.Prguse,
+                Parent = this,
+                Size = new Size(20, 19),
+                Location = new Point(20, 0),
+                HoverIndex = 2174,
+                PressedIndex = 2175,
+                Sound = SoundList.ButtonA,
+                Hint = GameLanguage.GroupFinder
+            };
+
+            GroupFinderButton.Click += (o, e) =>
+            {
+                if (GameScene.Scene.GroupFinderDialog.Visible == true)
+                {
+                    GameScene.Scene.GroupFinderDialog.Hide();
+                }
+                else
+                {
+                    GameScene.Scene.GroupFinderDialog.Show();
+                }
+            };
+        }
+
+        public void Hide()
+        {
+            if (!Visible) return;
+            Visible = false;
+        }
+        public void Show()
+        {
+            if (Visible) return;
+            Visible = true;
+        }
+    }
     public sealed class CharacterDuraPanel : MirImageControl
     {
         public MirImageControl GrayBackground, Background, Helmet, Armour, Belt, Boots, Weapon, Necklace, RightBracelet, LeftBracelet, RightRing, LeftRing, Torch, Stone, Amulet, Mount, Item1, Item2;
