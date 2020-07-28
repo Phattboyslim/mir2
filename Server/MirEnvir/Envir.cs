@@ -132,7 +132,8 @@ namespace Server.MirEnvir
 
         public List<ConquestInfo> ConquestInfos = new List<ConquestInfo>();
         public List<ConquestObject> Conquests = new List<ConquestObject>();
-        
+
+        public List<GroupFinderInfo> GroupFinderInfos = new List<GroupFinderInfo>();
 
 
         //multithread vars

@@ -400,6 +400,12 @@ namespace Server.MirNetwork
                 case (short)ClientPacketIds.ConsignItem:
                     ConsignItem((C.ConsignItem)p);
                     return;
+                case (short)ClientPacketIds.AddGroupFinder:
+                    AddGroupFinder((C.AddGroupFinder)p);
+                    return;
+                case (short)ClientPacketIds.RefreshGroupFinder:
+                    GroupFinderRefresh((C.GroupFinderRefresh)p);
+                    return;
                 case (short)ClientPacketIds.MarketSearch:
                     MarketSearch((C.MarketSearch)p);
                     return;
@@ -1227,6 +1233,22 @@ namespace Server.MirNetwork
             if (Stage != GameStage.Game) return;
 
             Player.ConsignItem(p.UniqueID, p.Price);
+        }
+        private void AddGroupFinder(C.AddGroupFinder p)
+        {
+            if (Stage != GameStage.Game) return;
+
+            MessageQueue.Enqueue($"Received group finder request:Id: {p.Id}, PlayerName: {p.PlayerName}, MinLvl: {p.MinimumLevel}, Title: {p.Title}, Created: {p.Created}, PlayerLimit: {p.PlayerLimit}, DescriptionM {p.Description}");
+
+            Player.AddGroupFinder(p.Id, p.PlayerName, p.MinimumLevel, p.Title, p.Created, p.PlayerLimit, p.Description);
+        }
+        private void GroupFinderRefresh(C.GroupFinderRefresh p)
+        {
+            if (Stage != GameStage.Game) return;
+
+            MessageQueue.Enqueue("Received group refresh");
+
+            Player.GroupFinderRefresh();
         }
         private void MarketSearch(C.MarketSearch p)
         {

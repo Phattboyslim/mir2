@@ -1,20 +1,29 @@
 ﻿using Client.MirControls;
 using Client.MirGraphics;
+using Client.MirNetwork;
 using Client.MirSounds;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
+using C = ClientPackets;
 
 namespace Client.MirScenes.Dialogs
 {
     public sealed class GroupFinderDialog : MirImageControl
     {
         public MirImageControl TitleLabel;
-        public MirButton CloseButton, CreateButton;
+        public MirLabel PageLabel;
+        public MirButton CloseButton, CreateButton, RefreshButton;
         public List<GroupFinderDetail> GroupFinderDetails = new List<GroupFinderDetail>();
+
+        public int Page, PageCount;
+        public static GroupFinderDialogRow Selected;
+        public GroupFinderDialogRow[] Rows = new GroupFinderDialogRow[10];
 
         public GroupFinderDialog()
         {
@@ -66,6 +75,69 @@ namespace Client.MirScenes.Dialogs
                     GameScene.Scene.GroupFinderFormDialog.Show();
                 }
             };
+            RefreshButton = new MirButton
+            {
+                Index = 663,
+                HoverIndex = 664,
+                PressedIndex = 665,
+                Location = new Point(710, 440),
+                Library = Libraries.Prguse,
+                Parent = this,
+                Sound = SoundList.ButtonA,
+            };
+            RefreshButton.Click += (o, e) =>
+            {
+                Network.Enqueue(new C.GroupFinderRefresh());
+            };
+
+            for (int i = 0; i < Rows.Length; i++)
+            {
+                Rows[i] = new GroupFinderDialogRow
+                {
+                    Location = new Point(32, 78 + i * 33),
+                    Parent = this
+                };
+            }
+
+            PageLabel = new MirLabel
+            {
+                Location = new Point(300, 444),
+                Size = new Size(70, 18),
+                DrawFormat = TextFormatFlags.HorizontalCenter,
+                Parent = this,
+                NotControl = true,
+                Text = "0/0",
+            };
+
+            UpdateInterface();
+
+            Network.Enqueue(new C.GroupFinderRefresh());
+        }
+        public void UpdateInterface()
+        {
+
+            PageLabel.Text = string.Format("{0}/{1}", Page + 1, PageCount);
+
+            for (int i = 0; i < 10; i++)
+                if (i + Page * 10 >= GroupFinderDetails.Count)
+                {
+                    Rows[i].Clear();
+                    if (Rows[i] == Selected) Selected = null;
+                }
+                else
+                {
+                    if (Rows[i] == Selected && Selected.Detail != GroupFinderDetails[i + Page * 10])
+                    {
+                        Selected.Border = false;
+                        Selected = null;
+                    }
+
+                    Rows[i].Update(GroupFinderDetails[i + Page * 10]);
+                }
+
+            for (int i = 0; i < Rows.Length; i++)
+                Rows[i].Border = Rows[i] == Selected;
+
         }
         public void Hide()
         {
@@ -78,21 +150,107 @@ namespace Client.MirScenes.Dialogs
             Visible = true;
         }
     }
-    public class GroupFinderDetail
+    
+    public sealed class GroupFinderDialogRow : MirControl
     {
-        public Guid Id { get; set; }
-        public int MinimumLevel { get; set; }
-        public string PlayerName { get; set; }
-        public int Type { get; set; }
-        public DateTime Created { get; set; }
-        public int PlayerLimit { get; set; }
-        public string Message { get; set; }
-    }
-    public class GroupFinderForm
-    {
-        public int MinimumLevel { get; set; }
-        public int Type { get; set; }
-        public string Message { get; set; }
-        public int PlayerLimit { get; set; }
+        private readonly bool ShowBorders = false;
+
+        public GroupFinderDetail Detail;
+
+        public MirLabel MinimumLevelLabel, PlayerNameLabel, TitleLabel, DescriptionLabel, CreatedLabel, PlayerLimitLabel;
+
+        public GroupFinderDialogRow()
+        {
+            Sound = SoundList.ButtonA;
+
+            Size = new Size(468, 30);
+
+            MinimumLevelLabel = new MirLabel
+            {
+                Size = new Size(60, 30),
+                DrawFormat = TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter,
+                Parent = this,
+                NotControl = true,
+                Border = ShowBorders,
+                BorderColour = Color.Red
+            };
+
+            PlayerNameLabel = new MirLabel
+            {
+                Size = new Size(88, 30),
+                Location = new Point(62, 0),
+                DrawFormat = TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter,
+                Parent = this,
+                NotControl = true,
+                Border = ShowBorders,
+                BorderColour = Color.Blue
+            };
+
+            TitleLabel = new MirLabel
+            {
+                Size = new Size(105, 30),
+                Location = new Point(153),
+                DrawFormat = TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter,
+                Parent = this,
+                NotControl = true,
+                Border = ShowBorders,
+                BorderColour = Color.Green
+            };
+
+            DescriptionLabel = new MirLabel
+            {
+                Size = new Size(177, 30),
+                Location = new Point(261),
+                DrawFormat = TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter,
+                Parent = this,
+                NotControl = true,
+                Border = ShowBorders,
+                BorderColour = Color.Red
+            };
+
+            CreatedLabel = new MirLabel
+            {
+                Size = new Size(116, 30),
+                Location = new Point(442),
+                DrawFormat = TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter,
+                Parent = this,
+                NotControl = true,
+                Border = ShowBorders,
+                BorderColour = Color.Green
+            };
+
+            PlayerLimitLabel = new MirLabel
+            {
+                Size = new Size(111, 30),
+                Location = new Point(562),
+                DrawFormat = TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter,
+                Parent = this,
+                NotControl = true,
+                Border = ShowBorders,
+                BorderColour = Color.Yellow
+            };
+
+        }
+
+        public void Clear()
+        {
+            Visible = false;
+            MinimumLevelLabel.Text = string.Empty;
+            PlayerNameLabel.Text = string.Empty;
+            TitleLabel.Text = string.Empty;
+            DescriptionLabel.Text = string.Empty;
+            CreatedLabel.Text = string.Empty;
+            PlayerLimitLabel.Text = string.Empty;
+        }
+        public void Update(GroupFinderDetail listing)
+        {
+            MinimumLevelLabel.Text = listing.MinimumLevel.ToString();
+            PlayerNameLabel.Text = listing.PlayerName;
+            TitleLabel.Text = listing.Title;
+            DescriptionLabel.Text = listing.Description;
+            CreatedLabel.Text = listing.Created.ToString("dd/MM/yy H:mm:ss");
+            PlayerLimitLabel.Text = $"0/{listing.PlayerLimit}";
+            Visible = true;
+        }
     }
 }

@@ -1208,6 +1208,51 @@ namespace ClientPackets
             writer.Write(Price);
         }
     }
+    public sealed class AddGroupFinder : Packet
+    {
+        public override short Index { get { return (short)ClientPacketIds.AddGroupFinder; } }
+
+        public Guid Id;
+        public int MinimumLevel;
+        public string PlayerName;
+        public string Title;
+        public int PlayerLimit;
+        public string Description;
+        public DateTime Created;
+
+        protected override void ReadPacket(BinaryReader reader)
+        {
+            Id = new Guid(reader.ReadString());
+            MinimumLevel = reader.ReadInt32();
+            PlayerName = reader.ReadString();
+            Title = reader.ReadString();
+            PlayerLimit = reader.ReadInt32();
+            Description = reader.ReadString();
+            Created = DateTime.FromBinary(reader.ReadInt64());
+        }
+        protected override void WritePacket(BinaryWriter writer)
+        {
+            writer.Write(Id.ToString());
+            writer.Write(MinimumLevel);
+            writer.Write(PlayerName);
+            writer.Write(Title);
+            writer.Write(PlayerLimit);
+            writer.Write(Description);
+            writer.Write(Created.ToBinary());
+        }
+    }
+    public sealed class GroupFinderRefresh : Packet
+    {
+        public override short Index { get { return (short)ClientPacketIds.RefreshGroupFinder; } }
+
+        protected override void ReadPacket(BinaryReader reader)
+        {
+        }
+
+        protected override void WritePacket(BinaryWriter writer)
+        {
+        }
+    }
     public sealed class MarketSearch : Packet
     {
         public override short Index { get { return (short)ClientPacketIds.MarketSearch; } }

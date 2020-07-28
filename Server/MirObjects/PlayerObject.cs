@@ -14590,6 +14590,21 @@ namespace Server.MirObjects
 
             Enqueue(p);
         }
+        public void AddGroupFinder(Guid id, string playerName, int minimumLevel, string title, DateTime created, int playerLimit, string description)
+        {
+            AddGroupFinder groupFinderInfo = new AddGroupFinder
+            {
+                Id = id,
+                PlayerName = playerName,
+                MinimumLevel = minimumLevel,
+                Title = title,
+                Created = created,
+                PlayerLimit = playerLimit,
+                Description = description
+
+            };
+            Envir.GroupFinderInfos.Add(new GroupFinderInfo(groupFinderInfo));
+        }
         public bool Match(AuctionInfo info)
         {
             if (Envir.Now >= info.ConsignmentDate.AddDays(Globals.ConsignmentLength) && !info.Sold)
@@ -14675,6 +14690,28 @@ namespace Server.MirObjects
 
                 GetMarket(match, ItemType.Nothing);
             }
+        }
+
+        public void GroupFinderRefresh()
+        {
+            var groupFinderInfos = Envir.GroupFinderInfos.Select(info =>
+            {
+                return new GroupFinderDetail
+                {
+                    Id = info.Id,
+                    PlayerName = info.PlayerName,
+                    MinimumLevel = info.MinimumLevel,
+                    Title = info.Title,
+                    Created = info.Created,
+                    PlayerLimit = info.PlayerLimit,
+                    Description = info.Description
+                };
+            }).ToList();
+
+            Enqueue(new S.GroupFinderPacket
+            {
+                Listings = groupFinderInfos
+            });
         }
         public void MarketRefresh()
         {

@@ -1387,6 +1387,12 @@ namespace Client.MirScenes
                 case (short)ServerPacketIds.MarketSuccess:
                     MarketSuccess((S.MarketSuccess)p);
                     break;
+                case (short)ServerPacketIds.GroupFinder:
+                    GroupFinder((S.GroupFinderPacket)p);
+                    break;
+                case (short)ServerPacketIds.GroupFinderPage:
+                    GroupFinderPage((S.GroupFinderPagePacket)p);
+                    break;
                 case (short)ServerPacketIds.ObjectSitDown:
                     ObjectSitDown((S.ObjectSitDown)p);
                     break;
@@ -4517,6 +4523,21 @@ namespace Client.MirScenes
             TrustMerchantDialog.Listings.AddRange(p.Listings);
             TrustMerchantDialog.Page = (TrustMerchantDialog.Listings.Count - 1) / 10;
             TrustMerchantDialog.UpdateInterface();
+        }
+        private void GroupFinder(S.GroupFinderPacket p)
+        {
+            GroupFinderDialog.GroupFinderDetails = p.Listings;
+            GroupFinderDialog.Page = 0;
+            GroupFinderDialog.PageCount = p.Pages;
+            GroupFinderDialog.UpdateInterface();
+        }
+        private void GroupFinderPage(S.GroupFinderPagePacket p)
+        {
+            if (!GroupFinderDialog.Visible) return;
+
+            GroupFinderDialog.GroupFinderDetails.AddRange(p.Listings);
+            GroupFinderDialog.Page = (GroupFinderDialog.GroupFinderDetails.Count - 1) / 10;
+            GroupFinderDialog.UpdateInterface();
         }
         private void ConsignItem(S.ConsignItem p)
         {

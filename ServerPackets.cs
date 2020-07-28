@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -3593,6 +3593,53 @@ namespace ServerPackets
 
             for (int i = 0; i < count; i++)
                 Listings.Add(new ClientAuction(reader));
+        }
+        protected override void WritePacket(BinaryWriter writer)
+        {
+            writer.Write(Listings.Count);
+
+            for (int i = 0; i < Listings.Count; i++)
+                Listings[i].Save(writer);
+        }
+    }
+    public sealed class GroupFinderPacket : Packet
+    {
+        public override short Index { get { return (short)ServerPacketIds.GroupFinder; } }
+
+        public List<GroupFinderDetail> Listings = new List<GroupFinderDetail>();
+        public int Pages;
+
+        protected override void ReadPacket(BinaryReader reader)
+        {
+            int count = reader.ReadInt32();
+
+            for (int i = 0; i < count; i++)
+                Listings.Add(new GroupFinderDetail(reader));
+
+            Pages = reader.ReadInt32();
+        }
+        protected override void WritePacket(BinaryWriter writer)
+        {
+            writer.Write(Listings.Count);
+
+            for (int i = 0; i < Listings.Count; i++)
+                Listings[i].Save(writer);
+
+            writer.Write(Pages);
+        }
+    }
+    public sealed class GroupFinderPagePacket : Packet
+    {
+        public override short Index { get { return (short)ServerPacketIds.GroupFinderPage; } }
+
+        public List<GroupFinderDetail> Listings = new List<GroupFinderDetail>();
+
+        protected override void ReadPacket(BinaryReader reader)
+        {
+            int count = reader.ReadInt32();
+
+            for (int i = 0; i < count; i++)
+                Listings.Add(new GroupFinderDetail(reader));
         }
         protected override void WritePacket(BinaryWriter writer)
         {

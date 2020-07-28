@@ -1396,6 +1396,8 @@ public enum ServerPacketIds : short
     ConsignItem,
     MarketFail,
     MarketSuccess,
+    GroupFinder,
+    GroupFinderPage,
     ObjectSitDown,
     InTrapRock,
     BaseStatsInfo,
@@ -1559,6 +1561,8 @@ public enum ClientPacketIds : short
     AddMember,
     DellMember,
     GroupInvite,
+    AddGroupFinder,
+    RefreshGroupFinder,
     TownRevive,
     SpellToggle,
     ConsignItem,
@@ -3852,7 +3856,40 @@ public class ClientAuction
         writer.Write(ConsignmentDate.ToBinary());
     }
 }
+public class GroupFinderDetail
+{
+    public Guid Id { get; set; }
+    public int MinimumLevel { get; set; }
+    public string PlayerName { get; set; }
+    public string Title { get; set; }
+    public DateTime Created { get; set; }
+    public string Description { get; set; }
+    public int PlayerLimit { get; set; }
+    public GroupFinderDetail()
+    {
 
+    }
+    public GroupFinderDetail(BinaryReader reader)
+    {
+        Id = new Guid(reader.ReadString());
+        MinimumLevel = reader.ReadInt32();
+        PlayerName = reader.ReadString();
+        Title = reader.ReadString();
+        Created = DateTime.FromBinary(reader.ReadInt64());
+        Description = reader.ReadString();
+        PlayerLimit = reader.ReadInt32();
+    }
+    public void Save(BinaryWriter writer)
+    {
+        writer.Write(Id.ToString());
+        writer.Write(MinimumLevel);
+        writer.Write(PlayerName);
+        writer.Write(Title);
+        writer.Write(Created.ToBinary());
+        writer.Write(Description);
+        writer.Write(PlayerLimit);
+    }
+}
 public class ClientQuestInfo
 {
     public int Index;
@@ -4590,6 +4627,10 @@ public abstract class Packet
                 return new C.SpellToggle();
             case (short)ClientPacketIds.ConsignItem:
                 return new C.ConsignItem();
+            case (short)ClientPacketIds.AddGroupFinder:
+                return new C.AddGroupFinder();
+            case (short)ClientPacketIds.RefreshGroupFinder:
+                return new C.GroupFinderRefresh();
             case (short)ClientPacketIds.MarketSearch:
                 return new C.MarketSearch();
             case (short)ClientPacketIds.MarketRefresh:
@@ -5023,6 +5064,10 @@ public abstract class Packet
                 return new S.MarketFail();
             case (short)ServerPacketIds.MarketSuccess:
                 return new S.MarketSuccess();
+            case (short)ServerPacketIds.GroupFinder:
+                return new S.GroupFinderPacket();
+            case (short)ServerPacketIds.GroupFinderPage:
+                return new S.GroupFinderPagePacket();
             case (short)ServerPacketIds.ObjectSitDown:
                 return new S.ObjectSitDown();
             case (short)ServerPacketIds.InTrapRock:
