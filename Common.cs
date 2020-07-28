@@ -1563,6 +1563,7 @@ public enum ClientPacketIds : short
     GroupInvite,
     AddGroupFinder,
     RefreshGroupFinder,
+    GroupFinderPage,
     TownRevive,
     SpellToggle,
     ConsignItem,
@@ -4631,6 +4632,8 @@ public abstract class Packet
                 return new C.AddGroupFinder();
             case (short)ClientPacketIds.RefreshGroupFinder:
                 return new C.GroupFinderRefresh();
+            case (short)ClientPacketIds.GroupFinderPage:
+                return new C.GroupFinderPage();
             case (short)ClientPacketIds.MarketSearch:
                 return new C.MarketSearch();
             case (short)ClientPacketIds.MarketRefresh:

@@ -1253,6 +1253,20 @@ namespace ClientPackets
         {
         }
     }
+    public sealed class GroupFinderPage : Packet
+    {
+        public override short Index { get { return (short)ClientPacketIds.GroupFinderPage; } }
+        public int Page;
+
+        protected override void ReadPacket(BinaryReader reader)
+        {
+            Page = reader.ReadInt32();
+        }
+        protected override void WritePacket(BinaryWriter writer)
+        {
+            writer.Write(Page);
+        }
+    }
     public sealed class MarketSearch : Packet
     {
         public override short Index { get { return (short)ClientPacketIds.MarketSearch; } }

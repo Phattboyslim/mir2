@@ -259,6 +259,7 @@ namespace Server.MirObjects
         public string MatchName;
         public ItemType MatchType;
         public int PageSent;
+        public int GroupFinderPageSent;
         public List<AuctionInfo> Search = new List<AuctionInfo>();
         public List<ItemSets> ItemSets = new List<ItemSets>();
         public List<EquipmentSlot> MirSet = new List<EquipmentSlot>();
@@ -14590,6 +14591,29 @@ namespace Server.MirObjects
 
             Enqueue(p);
         }
+        public void GroupFinderRefresh()
+        {
+            var groupFinderInfos = Envir.GroupFinderInfos.Select(info =>
+            {
+                return new GroupFinderDetail
+                {
+                    Id = info.Id,
+                    PlayerName = info.PlayerName,
+                    MinimumLevel = info.MinimumLevel,
+                    Title = info.Title,
+                    Created = info.Created,
+                    PlayerLimit = info.PlayerLimit,
+                    Description = info.Description
+                };
+            }).ToList();
+
+            Enqueue(new S.GroupFinderPacket
+            {
+                Listings = groupFinderInfos,
+                Pages = (groupFinderInfos.Count - 1) / 10 + 1
+            });
+        }
+
         public void AddGroupFinder(Guid id, string playerName, int minimumLevel, string title, DateTime created, int playerLimit, string description)
         {
             AddGroupFinder groupFinderInfo = new AddGroupFinder
@@ -14604,6 +14628,34 @@ namespace Server.MirObjects
 
             };
             Envir.GroupFinderInfos.Add(new GroupFinderInfo(groupFinderInfo));
+        }
+
+        public void GroupFinderPage(int page)
+        {
+            if (Dead || Envir.Time < SearchTime) return;
+
+            if (page <= GroupFinderPageSent) return;
+
+            SearchTime = Envir.Time + Globals.SearchDelay;
+
+            List<ClientAuction> listings = new List<ClientAuction>();
+
+            for (int i = 0; i < 10; i++)
+            {
+                if (i + page * 10 >= Search.Count) break;
+                listings.Add(Search[i + page * 10].CreateClientAuction(UserMatch));
+            }
+
+            for (int i = 0; i < listings.Count; i++)
+            {
+                //CheckItemInfo(listings[i].Item.Info);
+                CheckItem(listings[i].Item);
+            }
+
+            GroupFinderPageSent = page;
+
+            Enqueue(new S.NPCMarketPage { Listings = listings });
+
         }
         public bool Match(AuctionInfo info)
         {
@@ -14692,27 +14744,6 @@ namespace Server.MirObjects
             }
         }
 
-        public void GroupFinderRefresh()
-        {
-            var groupFinderInfos = Envir.GroupFinderInfos.Select(info =>
-            {
-                return new GroupFinderDetail
-                {
-                    Id = info.Id,
-                    PlayerName = info.PlayerName,
-                    MinimumLevel = info.MinimumLevel,
-                    Title = info.Title,
-                    Created = info.Created,
-                    PlayerLimit = info.PlayerLimit,
-                    Description = info.Description
-                };
-            }).ToList();
-
-            Enqueue(new S.GroupFinderPacket
-            {
-                Listings = groupFinderInfos
-            });
-        }
         public void MarketRefresh()
         {
             if (Dead || Envir.Time < SearchTime) return;

@@ -406,6 +406,9 @@ namespace Server.MirNetwork
                 case (short)ClientPacketIds.RefreshGroupFinder:
                     GroupFinderRefresh((C.GroupFinderRefresh)p);
                     return;
+                case (short)ClientPacketIds.GroupFinderPage:
+                    GroupFinderPage((C.GroupFinderPage)p);
+                    return;
                 case (short)ClientPacketIds.MarketSearch:
                     MarketSearch((C.MarketSearch)p);
                     return;
@@ -1249,6 +1252,14 @@ namespace Server.MirNetwork
             MessageQueue.Enqueue("Received group refresh");
 
             Player.GroupFinderRefresh();
+        }
+        private void GroupFinderPage(C.GroupFinderPage p)
+        {
+            if (Stage != GameStage.Game) return;
+
+            MessageQueue.Enqueue("Received group finder page refresh");
+
+            Player.GroupFinderPage(p.Page);
         }
         private void MarketSearch(C.MarketSearch p)
         {

@@ -16,9 +16,12 @@ namespace Client.MirScenes.Dialogs
 {
     public sealed class GroupFinderDialog : MirImageControl
     {
+        public static long SearchTime;
+
         public MirImageControl TitleLabel;
         public MirLabel PageLabel;
-        public MirButton CloseButton, CreateButton, RefreshButton;
+        public MirButton CloseButton, CreateButton, RefreshButton, NextButton, BackButton;
+
         public List<GroupFinderDetail> GroupFinderDetails = new List<GroupFinderDetail>();
 
         public int Page, PageCount;
@@ -87,6 +90,13 @@ namespace Client.MirScenes.Dialogs
             };
             RefreshButton.Click += (o, e) =>
             {
+                if (CMain.Time < SearchTime)
+                {
+                    GameScene.Scene.ChatDialog.ReceiveChat(string.Format("You can search again after {0} seconds.", Math.Ceiling((SearchTime - CMain.Time) / 1000D)), ChatType.System);
+                    return;
+                }
+                SearchTime = CMain.Time + Globals.SearchDelay;
+
                 Network.Enqueue(new C.GroupFinderRefresh());
             };
 
@@ -96,6 +106,11 @@ namespace Client.MirScenes.Dialogs
                 {
                     Location = new Point(32, 78 + i * 33),
                     Parent = this
+                };
+                Rows[i].Click += (o, e) =>
+                {
+                    Selected = (GroupFinderDialogRow)o;
+                    UpdateInterface();
                 };
             }
 
@@ -109,9 +124,47 @@ namespace Client.MirScenes.Dialogs
                 Text = "0/0",
             };
 
-            UpdateInterface();
+            BackButton = new MirButton
+            {
+                Index = 398,
+                Location = new Point(282, 444),
+                Library = Libraries.Prguse,
+                Parent = this,
+                PressedIndex = 399,
+                Sound = SoundList.ButtonA,
+            };
+            BackButton.Click += (o, e) =>
+            {
+                if (Page <= 0) return;
 
-            Network.Enqueue(new C.GroupFinderRefresh());
+                Page--;
+                UpdateInterface();
+            };
+
+            NextButton = new MirButton
+            {
+                Index = 396,
+                Location = new Point(378, 444),
+                Library = Libraries.Prguse,
+                Parent = this,
+                PressedIndex = 397,
+                Sound = SoundList.ButtonA,
+            };
+
+            NextButton.Click += (o, e) =>
+            {
+                if (Page >= PageCount - 1) return;
+                if (Page < (GroupFinderDetails.Count - 1) / 10)
+                {
+                    Page++;
+                    UpdateInterface();
+                    return;
+                }
+
+                Network.Enqueue(new C.GroupFinderPage { Page = Page + 1 });
+
+            };
+            UpdateInterface();
         }
         public void UpdateInterface()
         {
