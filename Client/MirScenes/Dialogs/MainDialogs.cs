@@ -4961,7 +4961,7 @@ namespace Client.MirScenes.Dialogs
                 }
                 else
                 {
-                    GameScene.Scene.GroupFinderDialog.Show();
+                    GameScene.Scene.GroupFinderDialog.Show(GameScene.Scene.GroupFinderDialog.GroupFinderDetails.Any(x => x.PlayerName == GameScene.Scene.MainDialog.CharacterName.Text));
                 }
             };
         }

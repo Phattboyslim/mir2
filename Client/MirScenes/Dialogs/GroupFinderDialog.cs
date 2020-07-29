@@ -27,6 +27,7 @@ namespace Client.MirScenes.Dialogs
         public int Page, PageCount;
         public static GroupFinderDialogRow Selected;
         public GroupFinderDialogRow[] Rows = new GroupFinderDialogRow[10];
+        private GameScene GameScene;
 
         public GroupFinderDialog()
         {
@@ -34,6 +35,7 @@ namespace Client.MirScenes.Dialogs
             Library = Libraries.Prguse3;
             Sort = true;
             Movable = true;
+            GameScene = (GameScene)Parent;
 
             TitleLabel = new MirImageControl
             {
@@ -78,6 +80,7 @@ namespace Client.MirScenes.Dialogs
                     GameScene.Scene.GroupFinderFormDialog.Show();
                 }
             };
+
             RefreshButton = new MirButton
             {
                 Index = 663,
@@ -95,7 +98,7 @@ namespace Client.MirScenes.Dialogs
                     GameScene.Scene.ChatDialog.ReceiveChat(string.Format("You can search again after {0} seconds.", Math.Ceiling((SearchTime - CMain.Time) / 1000D)), ChatType.System);
                     return;
                 }
-                SearchTime = CMain.Time + Globals.SearchDelay;
+                SearchTime = CMain.Time + Globals.GroupFinderRefreshDelay;
 
                 Network.Enqueue(new C.GroupFinderRefresh());
             };
@@ -197,10 +200,13 @@ namespace Client.MirScenes.Dialogs
             if (!Visible) return;
             Visible = false;
         }
-        public void Show()
+        public void Show(bool showCreateButton)
         {
             if (Visible) return;
             Visible = true;
+            CreateButton.Visible = showCreateButton;
+            Network.Enqueue(new C.GroupFinderRefresh());
+
         }
     }
     

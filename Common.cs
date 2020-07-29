@@ -2130,6 +2130,7 @@ public static class Globals
     public static float Commission = 0.05F;
 
     public const uint SearchDelay = 500,
+                      GroupFinderRefreshDelay = 4000,
                       ConsignmentLength = 7,
                       ConsignmentCost = 5000,
                       MinConsignment = 5000,

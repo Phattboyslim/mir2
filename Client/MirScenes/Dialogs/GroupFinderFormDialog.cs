@@ -17,8 +17,11 @@ namespace Client.MirScenes.Dialogs
     {
         public static long SearchTime;
 
-        MirButton CloseButton, CreateButton;
-        MirTextBox TitleTextBox, MinimumLevelTextBox, GroupSizeTextBox, DescriptionTextBox;
+        private MirButton CloseButton, CreateButton;
+        private MirTextBox TitleTextBox, MinimumLevelTextBox, GroupSizeTextBox, DescriptionTextBox;
+        
+        private GameScene GameScene;
+
         public GroupFinderFormDialog()
         {
             Index = 783;
@@ -26,6 +29,7 @@ namespace Client.MirScenes.Dialogs
             Sort = true;
             Location = new Point(300, 300);
             Movable = true;
+            GameScene = (GameScene)Parent;
 
             CloseButton = new MirButton
             {
@@ -111,6 +115,10 @@ namespace Client.MirScenes.Dialogs
                 Created = DateTime.UtcNow,
                 PlayerName = MainDialog.User.Name
             });
+
+            Network.Enqueue(new C.GroupFinderRefresh());
+
+            GameScene.GroupFinderDialog.CreateButton.Visible = false;
 
             Hide();
         }
