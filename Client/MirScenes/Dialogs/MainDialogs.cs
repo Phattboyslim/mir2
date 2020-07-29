@@ -19,6 +19,7 @@ using Effect = Client.MirObjects.Effect;
 
 using Client.MirScenes.Dialogs;
 using System.Drawing.Imaging;
+using ClientPackets;
 
 namespace Client.MirScenes.Dialogs
 {
@@ -4953,6 +4954,8 @@ namespace Client.MirScenes.Dialogs
                 Hint = GameLanguage.GroupFinder
             };
 
+            Network.Enqueue(new GroupFinderRefresh());
+
             GroupFinderButton.Click += (o, e) =>
             {
                 if (GameScene.Scene.GroupFinderDialog.Visible == true)
@@ -4961,7 +4964,9 @@ namespace Client.MirScenes.Dialogs
                 }
                 else
                 {
-                    GameScene.Scene.GroupFinderDialog.Show(GameScene.Scene.GroupFinderDialog.GroupFinderDetails.Any(x => x.PlayerName == GameScene.Scene.MainDialog.CharacterName.Text));
+                    var groupDetailFound = GameScene.Scene.GroupFinderDialog.GroupFinderDetails.Any(x => x.PlayerName == GameScene.User.Name);
+
+                    GameScene.Scene.GroupFinderDialog.Show(!groupDetailFound);
                 }
             };
         }

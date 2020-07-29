@@ -14638,23 +14638,7 @@ namespace Server.MirObjects
 
             SearchTime = Envir.Time + Globals.SearchDelay;
 
-            List<ClientAuction> listings = new List<ClientAuction>();
-
-            for (int i = 0; i < 10; i++)
-            {
-                if (i + page * 10 >= Search.Count) break;
-                listings.Add(Search[i + page * 10].CreateClientAuction(UserMatch));
-            }
-
-            for (int i = 0; i < listings.Count; i++)
-            {
-                //CheckItemInfo(listings[i].Item.Info);
-                CheckItem(listings[i].Item);
-            }
-
             GroupFinderPageSent = page;
-
-            Enqueue(new S.NPCMarketPage { Listings = listings });
 
         }
         public bool Match(AuctionInfo info)

@@ -1,6 +1,7 @@
 ﻿using Client.MirControls;
 using Client.MirGraphics;
 using Client.MirNetwork;
+using Client.MirObjects;
 using Client.MirSounds;
 using System;
 using System.Collections.Generic;
@@ -27,7 +28,6 @@ namespace Client.MirScenes.Dialogs
         public int Page, PageCount;
         public static GroupFinderDialogRow Selected;
         public GroupFinderDialogRow[] Rows = new GroupFinderDialogRow[10];
-        private GameScene GameScene;
 
         public GroupFinderDialog()
         {
@@ -35,7 +35,6 @@ namespace Client.MirScenes.Dialogs
             Library = Libraries.Prguse3;
             Sort = true;
             Movable = true;
-            GameScene = (GameScene)Parent;
 
             TitleLabel = new MirImageControl
             {
@@ -91,6 +90,7 @@ namespace Client.MirScenes.Dialogs
                 Parent = this,
                 Sound = SoundList.ButtonA,
             };
+
             RefreshButton.Click += (o, e) =>
             {
                 if (CMain.Time < SearchTime)
@@ -107,7 +107,7 @@ namespace Client.MirScenes.Dialogs
             {
                 Rows[i] = new GroupFinderDialogRow
                 {
-                    Location = new Point(32, 78 + i * 33),
+                    Location = new Point(32, 76 + i * 33),
                     Parent = this
                 };
                 Rows[i].Click += (o, e) =>
@@ -187,7 +187,6 @@ namespace Client.MirScenes.Dialogs
                         Selected.Border = false;
                         Selected = null;
                     }
-
                     Rows[i].Update(GroupFinderDetails[i + Page * 10]);
                 }
 
@@ -217,6 +216,8 @@ namespace Client.MirScenes.Dialogs
         public GroupFinderDetail Detail;
 
         public MirLabel MinimumLevelLabel, PlayerNameLabel, TitleLabel, DescriptionLabel, CreatedLabel, PlayerLimitLabel;
+
+        public MirButton JoinGroupButton;
 
         public GroupFinderDialogRow()
         {
@@ -289,6 +290,26 @@ namespace Client.MirScenes.Dialogs
                 BorderColour = Color.Yellow
             };
 
+            JoinGroupButton = new MirButton
+            {
+
+                Index = 214,
+                HoverIndex = 215,
+                PressedIndex = 216,
+                Location = new Point(685),
+                Library = Libraries.Prguse3,
+                Parent = this,
+                Sound = SoundList.ButtonA,
+            };
+
+            JoinGroupButton.Click += JoinGroupButton_Click;
+
+
+        }
+
+        private void JoinGroupButton_Click(object sender, EventArgs e)
+        {
+            
         }
 
         public void Clear()
@@ -309,6 +330,7 @@ namespace Client.MirScenes.Dialogs
             DescriptionLabel.Text = listing.Description;
             CreatedLabel.Text = listing.Created.ToString("dd/MM/yy H:mm:ss");
             PlayerLimitLabel.Text = $"0/{listing.PlayerLimit}";
+            JoinGroupButton.Visible = listing.PlayerName != GameScene.User.Name;
             Visible = true;
         }
     }

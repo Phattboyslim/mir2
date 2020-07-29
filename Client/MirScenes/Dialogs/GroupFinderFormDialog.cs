@@ -105,6 +105,11 @@ namespace Client.MirScenes.Dialogs
                 return;
             }
 
+            if (GameScene.Scene.GroupFinderDialog.Visible)
+                GameScene.Scene.GroupFinderDialog.Hide();
+
+            Hide();
+
             Network.Enqueue(new C.AddGroupFinder
             {
                 Id = Guid.NewGuid(),
@@ -117,10 +122,6 @@ namespace Client.MirScenes.Dialogs
             });
 
             Network.Enqueue(new C.GroupFinderRefresh());
-
-            GameScene.GroupFinderDialog.CreateButton.Visible = false;
-
-            Hide();
         }
 
         public void Hide()
