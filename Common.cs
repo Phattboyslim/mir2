@@ -1398,6 +1398,7 @@ public enum ServerPacketIds : short
     MarketSuccess,
     GroupFinder,
     GroupFinderPage,
+    GroupFinderRequest,
     ObjectSitDown,
     InTrapRock,
     BaseStatsInfo,
@@ -1559,6 +1560,7 @@ public enum ClientPacketIds : short
     Magic,
     SwitchGroup,
     AddMember,
+    JoinMember,
     DellMember,
     GroupInvite,
     AddGroupFinder,
@@ -4619,6 +4621,8 @@ public abstract class Packet
                 return new C.SwitchGroup();
             case (short)ClientPacketIds.AddMember:
                 return new C.AddMember();
+            case (short)ClientPacketIds.JoinMember:
+                return new C.JoinMember();
             case (short)ClientPacketIds.DellMember:
                 return new C.DelMember();
             case (short)ClientPacketIds.GroupInvite:
@@ -5072,6 +5076,8 @@ public abstract class Packet
                 return new S.GroupFinderPacket();
             case (short)ServerPacketIds.GroupFinderPage:
                 return new S.GroupFinderPagePacket();
+            case (short)ServerPacketIds.GroupFinderRequest:
+                return new S.GroupFinderRequest();
             case (short)ServerPacketIds.ObjectSitDown:
                 return new S.ObjectSitDown();
             case (short)ServerPacketIds.InTrapRock:

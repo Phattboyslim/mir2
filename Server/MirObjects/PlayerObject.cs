@@ -314,6 +314,7 @@ namespace Server.MirObjects
 
         public PlayerObject GroupInvitation;
         public PlayerObject TradeInvitation;
+        public PlayerObject GroupFinderInvitation;
 
         public PlayerObject TradePartner = null;
         public bool TradeLocked = false;
@@ -15402,7 +15403,38 @@ namespace Server.MirObjects
             SwitchGroup(true);
             player.Enqueue(new S.GroupInvite { Name = Name });
             player.GroupInvitation = this;
+        }
+        public void JoinMember(string name)
+        {
+            if (GroupMembers != null)
+            {
+                ReceiveChat("You are already in a group.", ChatType.System);
+                GroupFinderInvitation = null;
+                return;
+            }
 
+            if (!AllowGroup)
+            {
+                ReceiveChat("You are not allowing group.", ChatType.System);
+                GroupFinderInvitation = null;
+                return;
+            }
+
+            PlayerObject player = Envir.GetPlayer(name);
+
+            if (player == null)
+            {
+                ReceiveChat(name + " could not be found.", ChatType.System);
+                return;
+            }
+            if (player.GroupFinderInvitation != null)
+            {
+                ReceiveChat(name + " is already receiving an request from another player.", ChatType.System);
+                return;
+            }
+
+            player.Enqueue(new S.GroupFinderRequest { Name = Name });
+            player.GroupFinderInvitation = this;
         }
         public void DelMember(string name)
         {

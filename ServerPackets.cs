@@ -3159,6 +3159,20 @@ namespace ServerPackets
             writer.Write(Name);
         }
     }
+    public sealed class GroupFinderRequest : Packet
+    {
+        public override short Index { get { return (short)ServerPacketIds.GroupFinderRequest; } }
+
+        public string Name = string.Empty;
+        protected override void ReadPacket(BinaryReader reader)
+        {
+            Name = reader.ReadString();
+        }
+        protected override void WritePacket(BinaryWriter writer)
+        {
+            writer.Write(Name);
+        }
+    }
     public sealed class AddMember : Packet
     {
         public override short Index { get { return (short)ServerPacketIds.AddMember; } }
@@ -3173,6 +3187,7 @@ namespace ServerPackets
             writer.Write(Name);
         }
     }
+
     public sealed class Revived : Packet
     {
         public override short Index { get { return (short)ServerPacketIds.Revived; } }

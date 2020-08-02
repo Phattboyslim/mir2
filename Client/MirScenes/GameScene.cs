@@ -20,6 +20,7 @@ using Effect = Client.MirObjects.Effect;
 using Client.MirScenes.Dialogs;
 using System.Drawing.Imaging;
 using Client.Utils;
+using ServerPackets;
 
 namespace Client.MirScenes
 {
@@ -1392,6 +1393,9 @@ namespace Client.MirScenes
                     break;
                 case (short)ServerPacketIds.GroupFinderPage:
                     GroupFinderPage((S.GroupFinderPagePacket)p);
+                    break;
+                case (short)ServerPacketIds.GroupFinderRequest:
+                    GroupFinderRequest((S.GroupFinderRequest)p);
                     break;
                 case (short)ServerPacketIds.ObjectSitDown:
                     ObjectSitDown((S.ObjectSitDown)p);
@@ -3904,6 +3908,14 @@ namespace Client.MirScenes
 
             messageBox.YesButton.Click += (o, e) => Network.Enqueue(new C.GroupInvite { AcceptInvite = true });
             messageBox.NoButton.Click += (o, e) => Network.Enqueue(new C.GroupInvite { AcceptInvite = false });
+
+            messageBox.Show();
+        }
+        private void GroupFinderRequest(S.GroupFinderRequest p)
+        {
+            MirMessageBox messageBox = new MirMessageBox(string.Format("Do you want {0} to join your group?", p.Name), MirMessageBoxButtons.YesNo);
+
+            messageBox.YesButton.Click += (o, e) => Network.Enqueue(new C.AddMember { Name = p.Name });
 
             messageBox.Show();
         }

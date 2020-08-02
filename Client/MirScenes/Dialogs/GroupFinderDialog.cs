@@ -214,16 +214,13 @@ namespace Client.MirScenes.Dialogs
         private readonly bool ShowBorders = false;
 
         public GroupFinderDetail Detail;
-
         public MirLabel MinimumLevelLabel, PlayerNameLabel, TitleLabel, DescriptionLabel, CreatedLabel, PlayerLimitLabel;
-
         public MirButton JoinGroupButton;
 
         public GroupFinderDialogRow()
         {
             Sound = SoundList.ButtonA;
-
-            Size = new Size(468, 30);
+            Size = new Size(750, 30);
 
             MinimumLevelLabel = new MirLabel
             {
@@ -296,20 +293,26 @@ namespace Client.MirScenes.Dialogs
                 Index = 214,
                 HoverIndex = 215,
                 PressedIndex = 216,
-                Location = new Point(685),
+                Location = new Point(685,10),
                 Library = Libraries.Prguse3,
                 Parent = this,
-                Sound = SoundList.ButtonA,
+                Sound = SoundList.ButtonA
             };
 
             JoinGroupButton.Click += JoinGroupButton_Click;
-
-
         }
 
         private void JoinGroupButton_Click(object sender, EventArgs e)
         {
-            
+            List<string> GroupList = GroupDialog.GroupList;
+            if (GroupList != null && GroupList.Count > 0)
+            {
+                GameScene.Scene.ChatDialog.ReceiveChat("You are already in a group.", ChatType.System);
+                return;
+            }
+            GameScene.Scene.ChatDialog.ReceiveChat($"Sending request to join group to {PlayerNameLabel.Text}.", ChatType.System);
+
+            Network.Enqueue(new C.JoinMember { Owner = PlayerNameLabel.Text });
         }
 
         public void Clear()

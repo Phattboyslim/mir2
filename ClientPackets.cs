@@ -947,6 +947,20 @@ namespace ClientPackets
             writer.Write(Name);
         }
     }
+    public sealed class JoinMember : Packet
+    {
+        public override short Index { get { return (short)ClientPacketIds.JoinMember; } }
+        public string Owner = string.Empty;
+
+        protected override void ReadPacket(BinaryReader reader)
+        {
+            Owner = reader.ReadString();
+        }
+        protected override void WritePacket(BinaryWriter writer)
+        {
+            writer.Write(Owner);
+        }
+    }
     public sealed class DelMember : Packet
     {
         public override short Index { get { return (short)ClientPacketIds.DellMember; } }

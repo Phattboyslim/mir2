@@ -385,6 +385,9 @@ namespace Server.MirNetwork
                 case (short)ClientPacketIds.AddMember:
                     AddMember((C.AddMember)p);
                     return;
+                case (short)ClientPacketIds.JoinMember:
+                    JoinMember((C.JoinMember)p);
+                    return;
                 case (short)ClientPacketIds.DellMember:
                     DelMember((C.DelMember)p);
                     return;
@@ -1204,6 +1207,12 @@ namespace Server.MirNetwork
             if (Stage != GameStage.Game) return;
 
             Player.AddMember(p.Name);
+        }
+        private void JoinMember(C.JoinMember p)
+        {
+            if (Stage != GameStage.Game) return;
+
+            Player.JoinMember(p.Owner);
         }
         private void DelMember(C.DelMember p)
         {
