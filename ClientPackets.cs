@@ -950,15 +950,15 @@ namespace ClientPackets
     public sealed class JoinMember : Packet
     {
         public override short Index { get { return (short)ClientPacketIds.JoinMember; } }
-        public string Owner = string.Empty;
+        public string Name = string.Empty;
 
         protected override void ReadPacket(BinaryReader reader)
         {
-            Owner = reader.ReadString();
+            Name = reader.ReadString();
         }
         protected override void WritePacket(BinaryWriter writer)
         {
-            writer.Write(Owner);
+            writer.Write(Name);
         }
     }
     public sealed class DelMember : Packet
@@ -989,7 +989,36 @@ namespace ClientPackets
             writer.Write(AcceptInvite);
         }
     }
+    public sealed class GroupFinderInvite : Packet
+    {
+        public override short Index { get { return (short)ClientPacketIds.GroupFinderInvite; } }
 
+        public bool AcceptInvite;
+        public string Name;
+        protected override void ReadPacket(BinaryReader reader)
+        {
+            AcceptInvite = reader.ReadBoolean();
+            Name = reader.ReadString();
+        }
+        protected override void WritePacket(BinaryWriter writer)
+        {
+            writer.Write(AcceptInvite);
+            writer.Write(Name);
+        }
+    }
+    public sealed class DeleteGroupFinder : Packet
+    {
+        public override short Index { get { return (short)ClientPacketIds.DeleteGroupFinder; } }
+        public string Name;
+        protected override void ReadPacket(BinaryReader reader)
+        {
+            Name = reader.ReadString();
+        }
+        protected override void WritePacket(BinaryWriter writer)
+        {
+            writer.Write(Name);
+        }
+    }
     public sealed class MarriageRequest : Packet
     {
         public override short Index { get { return (short)ClientPacketIds.MarriageRequest; } }

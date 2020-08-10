@@ -1397,6 +1397,9 @@ namespace Client.MirScenes
                 case (short)ServerPacketIds.GroupFinderRequest:
                     GroupFinderRequest((S.GroupFinderRequest)p);
                     break;
+                case (short)ServerPacketIds.DeleteGroupFinder:
+                    DeleteGroupFinder((S.DeleteGroupFinder)p);
+                    break;
                 case (short)ServerPacketIds.ObjectSitDown:
                     ObjectSitDown((S.ObjectSitDown)p);
                     break;
@@ -3911,14 +3914,6 @@ namespace Client.MirScenes
 
             messageBox.Show();
         }
-        private void GroupFinderRequest(S.GroupFinderRequest p)
-        {
-            MirMessageBox messageBox = new MirMessageBox(string.Format("Do you want {0} to join your group?", p.Name), MirMessageBoxButtons.YesNo);
-
-            messageBox.YesButton.Click += (o, e) => Network.Enqueue(new C.AddMember { Name = p.Name });
-
-            messageBox.Show();
-        }
         private void AddMember(S.AddMember p)
         {
             GroupDialog.GroupList.Add(p.Name);
@@ -4551,6 +4546,21 @@ namespace Client.MirScenes
             GroupFinderDialog.Page = (GroupFinderDialog.GroupFinderDetails.Count - 1) / 10;
             GroupFinderDialog.UpdateInterface();
         }
+        private void GroupFinderRequest(S.GroupFinderRequest p)
+        {
+            MirMessageBox messageBox = new MirMessageBox(string.Format("Do you want {0} to join your group?", p.Name), MirMessageBoxButtons.YesNo);
+
+            messageBox.YesButton.Click += (o, e) => Network.Enqueue(new C.GroupFinderInvite { AcceptInvite = true, Name = p.Name });
+            messageBox.NoButton.Click += (o, e) => Network.Enqueue(new C.GroupFinderInvite { AcceptInvite = false, Name = p.Name });
+
+            messageBox.Show();
+        }
+
+        private void DeleteGroupFinder(S.DeleteGroupFinder p)
+        {
+            Network.Enqueue(new C.DeleteGroupFinder { Name = p.Name });
+        }
+        
         private void ConsignItem(S.ConsignItem p)
         {
             MirItemCell cell = InventoryDialog.GetCell(p.UniqueID) ?? BeltDialog.GetCell(p.UniqueID);

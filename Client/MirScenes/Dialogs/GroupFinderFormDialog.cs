@@ -20,7 +20,6 @@ namespace Client.MirScenes.Dialogs
         private MirButton CloseButton, CreateButton;
         private MirTextBox TitleTextBox, MinimumLevelTextBox, GroupSizeTextBox, DescriptionTextBox;
         
-        private GameScene GameScene;
 
         public GroupFinderFormDialog()
         {
@@ -29,7 +28,6 @@ namespace Client.MirScenes.Dialogs
             Sort = true;
             Location = new Point(300, 300);
             Movable = true;
-            GameScene = (GameScene)Parent;
 
             CloseButton = new MirButton
             {
@@ -62,6 +60,8 @@ namespace Client.MirScenes.Dialogs
                 CanLoseFocus = true
             };
 
+            MinimumLevelTextBox.KeyPress += MinimumLevelTextBox_KeyPress;
+
             GroupSizeTextBox = new MirTextBox
             {
                 Location = new Point(134, 128),
@@ -70,6 +70,8 @@ namespace Client.MirScenes.Dialogs
                 MaxLength = 20,
                 CanLoseFocus = true
             };
+
+            GroupSizeTextBox.KeyPress += GroupSizeTextBox_KeyPress;
 
             DescriptionTextBox = new MirTextBox
             {
@@ -95,6 +97,22 @@ namespace Client.MirScenes.Dialogs
 
         }
 
+        private void GroupSizeTextBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void MinimumLevelTextBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            {
+                e.Handled = true;
+            }
+        }
+
         private void CreateButton_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(TitleTextBox.Text) ||
@@ -117,7 +135,7 @@ namespace Client.MirScenes.Dialogs
                 MinimumLevel = int.Parse(MinimumLevelTextBox.Text),
                 PlayerLimit = int.Parse(GroupSizeTextBox.Text),
                 Description = DescriptionTextBox.Text,
-                Created = DateTime.UtcNow,
+                Created = DateTime.Now,
                 PlayerName = MainDialog.User.Name
             });
 
@@ -132,6 +150,7 @@ namespace Client.MirScenes.Dialogs
         public void Show()
         {
             if (Visible) return;
+            TitleTextBox.TextBox.Focus();
             Visible = true;
         }
     }

@@ -1399,6 +1399,7 @@ public enum ServerPacketIds : short
     GroupFinder,
     GroupFinderPage,
     GroupFinderRequest,
+    DeleteGroupFinder,
     ObjectSitDown,
     InTrapRock,
     BaseStatsInfo,
@@ -1563,7 +1564,9 @@ public enum ClientPacketIds : short
     JoinMember,
     DellMember,
     GroupInvite,
+    GroupFinderInvite,
     AddGroupFinder,
+    DeleteGroupFinder,
     RefreshGroupFinder,
     GroupFinderPage,
     TownRevive,
@@ -3869,6 +3872,10 @@ public class GroupFinderDetail
     public DateTime Created { get; set; }
     public string Description { get; set; }
     public int PlayerLimit { get; set; }
+    public int GroupMemberCount { get; set; }
+
+    public List<string> GroupMemberNames = new List<string>();
+
     public GroupFinderDetail()
     {
 
@@ -3882,6 +3889,11 @@ public class GroupFinderDetail
         Created = DateTime.FromBinary(reader.ReadInt64());
         Description = reader.ReadString();
         PlayerLimit = reader.ReadInt32();
+        GroupMemberCount = reader.ReadInt32();
+
+        int count = reader.ReadInt32();
+        for (var i = 0; i < count; i++)
+            GroupMemberNames.Add(reader.ReadString());
     }
     public void Save(BinaryWriter writer)
     {
@@ -3892,6 +3904,11 @@ public class GroupFinderDetail
         writer.Write(Created.ToBinary());
         writer.Write(Description);
         writer.Write(PlayerLimit);
+        writer.Write(GroupMemberCount);
+
+        writer.Write(GroupMemberNames.Count);
+        for(int i =0; i < GroupMemberNames.Count; i++)
+            writer.Write(GroupMemberNames[i]);
     }
 }
 public class ClientQuestInfo
@@ -4627,6 +4644,8 @@ public abstract class Packet
                 return new C.DelMember();
             case (short)ClientPacketIds.GroupInvite:
                 return new C.GroupInvite();
+            case (short)ClientPacketIds.GroupFinderInvite:
+                return new C.GroupFinderInvite();
             case (short)ClientPacketIds.TownRevive:
                 return new C.TownRevive();
             case (short)ClientPacketIds.SpellToggle:
@@ -4639,6 +4658,8 @@ public abstract class Packet
                 return new C.GroupFinderRefresh();
             case (short)ClientPacketIds.GroupFinderPage:
                 return new C.GroupFinderPage();
+            case (short)ClientPacketIds.DeleteGroupFinder:
+                return new C.DeleteGroupFinder();
             case (short)ClientPacketIds.MarketSearch:
                 return new C.MarketSearch();
             case (short)ClientPacketIds.MarketRefresh:
@@ -5078,6 +5099,8 @@ public abstract class Packet
                 return new S.GroupFinderPagePacket();
             case (short)ServerPacketIds.GroupFinderRequest:
                 return new S.GroupFinderRequest();
+            case (short)ServerPacketIds.DeleteGroupFinder:
+                return new S.DeleteGroupFinder();
             case (short)ServerPacketIds.ObjectSitDown:
                 return new S.ObjectSitDown();
             case (short)ServerPacketIds.InTrapRock:

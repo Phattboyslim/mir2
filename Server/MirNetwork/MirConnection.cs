@@ -394,6 +394,12 @@ namespace Server.MirNetwork
                 case (short)ClientPacketIds.GroupInvite:
                     GroupInvite((C.GroupInvite)p);
                     return;
+                case (short)ClientPacketIds.GroupFinderInvite:
+                    GroupFinderInvite((C.GroupFinderInvite)p);
+                    return;
+                case (short)ClientPacketIds.DeleteGroupFinder:
+                    DeleteGroupFinder((C.DeleteGroupFinder)p);
+                    return;
                 case (short)ClientPacketIds.TownRevive:
                     TownRevive();
                     return;
@@ -407,7 +413,7 @@ namespace Server.MirNetwork
                     AddGroupFinder((C.AddGroupFinder)p);
                     return;
                 case (short)ClientPacketIds.RefreshGroupFinder:
-                    GroupFinderRefresh((C.GroupFinderRefresh)p);
+                    GroupFinderRefresh();
                     return;
                 case (short)ClientPacketIds.GroupFinderPage:
                     GroupFinderPage((C.GroupFinderPage)p);
@@ -1212,21 +1218,15 @@ namespace Server.MirNetwork
         {
             if (Stage != GameStage.Game) return;
 
-            Player.JoinMember(p.Owner);
+            Player.JoinMember(p.Name);
         }
+
         private void DelMember(C.DelMember p)
         {
             if (Stage != GameStage.Game) return;
 
             Player.DelMember(p.Name);
         }
-        private void GroupInvite(C.GroupInvite p)
-        {
-            if (Stage != GameStage.Game) return;
-
-            Player.GroupInvite(p.AcceptInvite);
-        }
-
         private void TownRevive()
         {
             if (Stage != GameStage.Game) return;
@@ -1250,15 +1250,18 @@ namespace Server.MirNetwork
         {
             if (Stage != GameStage.Game) return;
 
-            MessageQueue.Enqueue($"Received group finder request:Id: {p.Id}, PlayerName: {p.PlayerName}, MinLvl: {p.MinimumLevel}, Title: {p.Title}, Created: {p.Created}, PlayerLimit: {p.PlayerLimit}, DescriptionM {p.Description}");
-
             Player.AddGroupFinder(p.Id, p.PlayerName, p.MinimumLevel, p.Title, p.Created, p.PlayerLimit, p.Description);
         }
-        private void GroupFinderRefresh(C.GroupFinderRefresh p)
+
+        private void DeleteGroupFinder(C.DeleteGroupFinder p)
         {
             if (Stage != GameStage.Game) return;
 
-            MessageQueue.Enqueue("Received group refresh");
+            Player.DeleteGroupFinder(p.Name);
+        }
+        private void GroupFinderRefresh()
+        {
+            if (Stage != GameStage.Game) return;
 
             Player.GroupFinderRefresh();
         }
@@ -1266,10 +1269,21 @@ namespace Server.MirNetwork
         {
             if (Stage != GameStage.Game) return;
 
-            MessageQueue.Enqueue("Received group finder page refresh");
-
             Player.GroupFinderPage(p.Page);
         }
+        private void GroupInvite(C.GroupInvite p)
+        {
+            if (Stage != GameStage.Game) return;
+
+            Player.GroupInvite(p.AcceptInvite);
+        }
+        private void GroupFinderInvite(C.GroupFinderInvite p)
+        {
+            if (Stage != GameStage.Game) return;
+
+            Player.GroupFinderInvite(p.AcceptInvite, p.Name);
+        }
+
         private void MarketSearch(C.MarketSearch p)
         {
             if (Stage != GameStage.Game) return;

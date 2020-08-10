@@ -304,15 +304,9 @@ namespace Client.MirScenes.Dialogs
 
         private void JoinGroupButton_Click(object sender, EventArgs e)
         {
-            List<string> GroupList = GroupDialog.GroupList;
-            if (GroupList != null && GroupList.Count > 0)
-            {
-                GameScene.Scene.ChatDialog.ReceiveChat("You are already in a group.", ChatType.System);
-                return;
-            }
             GameScene.Scene.ChatDialog.ReceiveChat($"Sending request to join group to {PlayerNameLabel.Text}.", ChatType.System);
 
-            Network.Enqueue(new C.JoinMember { Owner = PlayerNameLabel.Text });
+            Network.Enqueue(new C.JoinMember { Name = PlayerNameLabel.Text });
         }
 
         public void Clear()
@@ -327,13 +321,14 @@ namespace Client.MirScenes.Dialogs
         }
         public void Update(GroupFinderDetail listing)
         {
+            int GroupMemberCount = listing.GroupMemberCount > 0 ? listing.GroupMemberCount : 1;
             MinimumLevelLabel.Text = listing.MinimumLevel.ToString();
             PlayerNameLabel.Text = listing.PlayerName;
             TitleLabel.Text = listing.Title;
             DescriptionLabel.Text = listing.Description;
             CreatedLabel.Text = listing.Created.ToString("dd/MM/yy H:mm:ss");
-            PlayerLimitLabel.Text = $"0/{listing.PlayerLimit}";
-            JoinGroupButton.Visible = listing.PlayerName != GameScene.User.Name;
+            PlayerLimitLabel.Text = $"{GroupMemberCount}/{listing.PlayerLimit}";
+            JoinGroupButton.Visible = listing.PlayerName != GameScene.User.Name && GroupMemberCount < listing.PlayerLimit && !listing.GroupMemberNames.Any(x => x == GameScene.User.Name);
             Visible = true;
         }
     }
