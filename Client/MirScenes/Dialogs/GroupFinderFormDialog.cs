@@ -17,8 +17,8 @@ namespace Client.MirScenes.Dialogs
     {
         public static long SearchTime;
 
-        private MirButton CloseButton, CreateButton;
-        private MirTextBox TitleTextBox, MinimumLevelTextBox, GroupSizeTextBox, DescriptionTextBox;
+        public MirButton CloseButton, CreateButton;
+        public MirTextBox TitleTextBox, MinimumLevelTextBox, GroupSizeTextBox, DescriptionTextBox;
         
 
         public GroupFinderFormDialog()
@@ -42,20 +42,11 @@ namespace Client.MirScenes.Dialogs
 
             CloseButton.Click += (o, e) => Hide();
 
-            TitleTextBox = new MirTextBox
-            {
-                Location = new Point(38, 74),
-                Parent = this,
-                Size = new Size(140, 15),
-                MaxLength = 20,
-                CanLoseFocus = true
-            };
-
             MinimumLevelTextBox = new MirTextBox
             {
                 Location = new Point(58, 128),
                 Parent = this,
-                Size = new Size(35, 15),
+                Size = new Size(38, 15),
                 MaxLength = 20,
                 CanLoseFocus = true
             };
@@ -64,9 +55,9 @@ namespace Client.MirScenes.Dialogs
 
             GroupSizeTextBox = new MirTextBox
             {
-                Location = new Point(134, 128),
+                Location = new Point(135, 128),
                 Parent = this,
-                Size = new Size(35, 15),
+                Size = new Size(38, 15),
                 MaxLength = 20,
                 CanLoseFocus = true
             };
@@ -75,7 +66,7 @@ namespace Client.MirScenes.Dialogs
 
             DescriptionTextBox = new MirTextBox
             {
-                Location = new Point(40, 178),
+                Location = new Point(38, 178),
                 Parent = this,
                 Size = new Size(160, 15),
                 MaxLength = 20,
@@ -94,6 +85,15 @@ namespace Client.MirScenes.Dialogs
             };
 
             CreateButton.Click += CreateButton_Click;
+
+            TitleTextBox = new MirTextBox
+            {
+                Location = new Point(38, 74),
+                Parent = this,
+                Size = new Size(160, 15),
+                MaxLength = 20,
+                CanLoseFocus = true
+            };
 
         }
 
@@ -150,7 +150,6 @@ namespace Client.MirScenes.Dialogs
         public void Show()
         {
             if (Visible) return;
-            TitleTextBox.TextBox.Focus();
             Visible = true;
         }
     }

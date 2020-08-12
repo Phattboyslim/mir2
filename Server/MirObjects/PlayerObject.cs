@@ -14650,7 +14650,13 @@ namespace Server.MirObjects
                 PlayerLimit = playerLimit,
                 Description = description
             };
+
             Envir.GroupFinderInfos.Add(new GroupFinderInfo(groupFinderInfo));
+
+            foreach (var player in Envir.Players)
+            {
+                player.ReceiveChat($"{playerName} is looking for group. MinLvl: {minimumLevel}, GroupSize: {playerLimit}, Title: {title}, Description: {description}", ChatType.Announcement);
+            }
         }
 
         public void GroupFinderPage(int page)

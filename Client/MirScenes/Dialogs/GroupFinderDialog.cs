@@ -77,6 +77,7 @@ namespace Client.MirScenes.Dialogs
                 else
                 {
                     GameScene.Scene.GroupFinderFormDialog.Show();
+                    GameScene.Scene.GroupFinderFormDialog.TitleTextBox.SetFocus();
                 }
             };
 
@@ -215,7 +216,7 @@ namespace Client.MirScenes.Dialogs
 
         public GroupFinderDetail Detail;
         public MirLabel MinimumLevelLabel, PlayerNameLabel, TitleLabel, DescriptionLabel, CreatedLabel, PlayerLimitLabel;
-        public MirButton JoinGroupButton;
+        public MirButton JoinGroupButton, CloseButton;
 
         public GroupFinderDialogRow()
         {
@@ -293,13 +294,36 @@ namespace Client.MirScenes.Dialogs
                 Index = 214,
                 HoverIndex = 215,
                 PressedIndex = 216,
-                Location = new Point(685,10),
+                Location = new Point(685, 10),
+                Library = Libraries.Prguse3,
+                Parent = this,
+                Sound = SoundList.ButtonA
+            };
+
+            CloseButton = new MirButton
+            {
+
+                Index = 196,
+                HoverIndex = 197,
+                PressedIndex = 198,
+                Location = new Point(685, 10),
                 Library = Libraries.Prguse3,
                 Parent = this,
                 Sound = SoundList.ButtonA
             };
 
             JoinGroupButton.Click += JoinGroupButton_Click;
+            CloseButton.Click += CloseButton_Click;
+        }
+
+        private void CloseButton_Click(object sender, EventArgs e)
+        {
+            Network.Enqueue(new C.DeleteGroupFinder { Name = GameScene.User.Name });
+
+            Network.Enqueue(new C.GroupFinderRefresh());
+
+            GameScene.Scene.GroupFinderDialog.Hide();
+
         }
 
         private void JoinGroupButton_Click(object sender, EventArgs e)
@@ -307,6 +331,10 @@ namespace Client.MirScenes.Dialogs
             GameScene.Scene.ChatDialog.ReceiveChat($"Sending request to join group to {PlayerNameLabel.Text}.", ChatType.System);
 
             Network.Enqueue(new C.JoinMember { Name = PlayerNameLabel.Text });
+
+            Network.Enqueue(new C.GroupFinderRefresh());
+
+            GameScene.Scene.GroupFinderDialog.Hide();
         }
 
         public void Clear()
@@ -329,6 +357,7 @@ namespace Client.MirScenes.Dialogs
             CreatedLabel.Text = listing.Created.ToString("dd/MM/yy H:mm:ss");
             PlayerLimitLabel.Text = $"{GroupMemberCount}/{listing.PlayerLimit}";
             JoinGroupButton.Visible = listing.PlayerName != GameScene.User.Name && GroupMemberCount < listing.PlayerLimit && !listing.GroupMemberNames.Any(x => x == GameScene.User.Name);
+            CloseButton.Visible = listing.PlayerName == GameScene.User.Name;
             Visible = true;
         }
     }
