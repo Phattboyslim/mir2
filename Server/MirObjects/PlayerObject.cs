@@ -15457,7 +15457,7 @@ namespace Server.MirObjects
                 Enqueue(new S.DeleteGroupFinder { Name = Name });
             }
 
-            info = Envir.GroupFinderInfos.Find(x => x.PlayerName == name);
+            info = Envir.GroupFinderInfos.FirstOrDefault(x => x.PlayerName == name);
 
             if (info == null)
             {
@@ -15480,14 +15480,14 @@ namespace Server.MirObjects
                 ReceiveChat(name + " could not be found.", ChatType.System);
                 return;
             }
-            if (player.GroupFinderInvitation != null)
-            {
-                ReceiveChat(name + " is already receiving an request from another player.", ChatType.System);
-                return;
-            }
             if (player.GroupMembers != null && player.GroupMembers.Count() == info.PlayerLimit)
             {
                 ReceiveChat($"{name} their group is already full.", ChatType.System);
+                return;
+            }
+            if (player.GroupFinderInvitation != null)
+            {
+                ReceiveChat(name + " is already receiving an request from another player.", ChatType.System);
                 return;
             }
 
@@ -15690,6 +15690,8 @@ namespace Server.MirObjects
             }
 
             GroupFinderInvitation = null;
+
+            player.Enqueue(new S.AddMember { Name = player.Name });
 
             GroupMembers.ForEach(member =>
             {
