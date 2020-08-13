@@ -174,7 +174,7 @@ namespace Client.MirControls
 
         void TextBox_TextChanged(object sender, EventArgs e)
         {
-            if (uint.TryParse(InputTextBox.Text, out Amount) && Amount >= MinAmount)
+            if (uint.TryParse(InputTextBox.Text.Replace(",",string.Empty).Replace(".",string.Empty), out Amount) && Amount >= MinAmount)
             {
                 InputTextBox.BorderColour = Color.Lime;
 

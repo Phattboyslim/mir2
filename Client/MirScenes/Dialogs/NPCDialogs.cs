@@ -882,7 +882,7 @@ namespace Client.MirScenes.Dialogs
                         InputTextBox = { Text = string.Empty },
                         Amount = 0
                     };
-
+                    box.InputTextBox.TextBox.TextChanged += ConsignTextBox_TextChanged;
                     box.Show();
                     box.OKButton.Click += (o, e) =>
                     {
@@ -947,6 +947,23 @@ namespace Client.MirScenes.Dialogs
             TargetItem = null;
             OldCell.Locked = false;
             OldCell = null;
+        }
+
+        private void ConsignTextBox_TextChanged(object sender, EventArgs e)
+        {
+            IFormatProvider formatProvider = new CultureInfo("en-GB");
+
+            var textBox = (TextBox)sender;
+            if (string.IsNullOrEmpty(textBox.Text))
+            {
+                return;
+            }
+            ulong amount;
+            if (ulong.TryParse(textBox.Text.Replace(".", string.Empty).Replace(",", string.Empty), out amount))
+            {
+                textBox.Text = string.Format(formatProvider, "{0:n0}", amount);
+                textBox.Select(textBox.Text.Length, 0);
+            }
         }
 
         private void ItemCell_Click()
