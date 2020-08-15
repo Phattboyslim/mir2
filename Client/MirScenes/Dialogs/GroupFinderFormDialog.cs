@@ -53,6 +53,7 @@ namespace Client.MirScenes.Dialogs
 
             MinimumLevelTextBox.KeyPress += MinimumLevelTextBox_KeyPress;
             MinimumLevelTextBox.TextBox.TextChanged += MinimumLevelTextBox_TextChanged;
+            MinimumLevelTextBox.TextBox.LostFocus += MinimumLevelTextBox_LostFocus;
 
             GroupSizeTextBox = new MirTextBox
             {
@@ -64,8 +65,8 @@ namespace Client.MirScenes.Dialogs
             };
 
             GroupSizeTextBox.KeyPress += GroupSizeTextBox_KeyPress;
-            GroupSizeTextBox.TextBox.TextChanged += TextBox_TextChanged;
-
+            GroupSizeTextBox.TextBox.TextChanged += GroupSizeTextBox_TextChanged;
+            GroupSizeTextBox.TextBox.LostFocus += GroupSizeTextBox_LostFocus;
             DescriptionTextBox = new MirTextBox
             {
                 Location = new Point(38, 178),
@@ -99,7 +100,36 @@ namespace Client.MirScenes.Dialogs
 
         }
 
-        private void TextBox_TextChanged(object sender, EventArgs e)
+        private void MinimumLevelTextBox_LostFocus(object sender, EventArgs e)
+        {
+            var textBox = (TextBox)sender;
+            int minimumLevel;
+            if (int.TryParse(textBox.Text, out minimumLevel))
+            {
+                if (minimumLevel < 150)
+                {
+                    minimumLevel = 150;
+                }
+            }
+            textBox.Text = minimumLevel.ToString();
+            textBox.Select(textBox.Text.Length, 0);
+        }
+
+        private void GroupSizeTextBox_LostFocus(object sender, EventArgs e)
+        {
+            var textBox = (TextBox)sender;
+            int groupSize;
+            if (int.TryParse(textBox.Text, out groupSize))
+            {
+                if (groupSize < 2)
+                {
+                    groupSize = 2;
+                }
+            }
+            textBox.Text = groupSize.ToString();
+            textBox.Select(textBox.Text.Length, 0);
+        }
+
         private void MinimumLevelTextBox_TextChanged(object sender, EventArgs e)
         {
             var textBox = (TextBox)sender;
@@ -114,6 +144,8 @@ namespace Client.MirScenes.Dialogs
             textBox.Text = minimumLevel.ToString();
             textBox.Select(textBox.Text.Length, 0);
         }
+
+        private void GroupSizeTextBox_TextChanged(object sender, EventArgs e)
         {
             var textBox = (TextBox)sender;
             int groupSize;
