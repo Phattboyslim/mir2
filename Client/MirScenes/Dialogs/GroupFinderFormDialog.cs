@@ -63,6 +63,7 @@ namespace Client.MirScenes.Dialogs
             };
 
             GroupSizeTextBox.KeyPress += GroupSizeTextBox_KeyPress;
+            GroupSizeTextBox.TextBox.TextChanged += TextBox_TextChanged;
 
             DescriptionTextBox = new MirTextBox
             {
@@ -95,6 +96,21 @@ namespace Client.MirScenes.Dialogs
                 CanLoseFocus = true
             };
 
+        }
+
+        private void TextBox_TextChanged(object sender, EventArgs e)
+        {
+            var textBox = (TextBox)sender;
+            int groupSize;
+            if (int.TryParse(textBox.Text, out groupSize))
+            {
+                if(groupSize > Globals.MaxGroup)
+                {
+                    groupSize = Globals.MaxGroup;
+                }
+            }
+            textBox.Text = groupSize.ToString();
+            textBox.Select(textBox.Text.Length, 0);
         }
 
         private void GroupSizeTextBox_KeyPress(object sender, KeyPressEventArgs e)
