@@ -385,20 +385,11 @@ namespace Server.MirNetwork
                 case (short)ClientPacketIds.AddMember:
                     AddMember((C.AddMember)p);
                     return;
-                case (short)ClientPacketIds.JoinMember:
-                    JoinMember((C.JoinMember)p);
-                    return;
                 case (short)ClientPacketIds.DellMember:
                     DelMember((C.DelMember)p);
                     return;
                 case (short)ClientPacketIds.GroupInvite:
                     GroupInvite((C.GroupInvite)p);
-                    return;
-                case (short)ClientPacketIds.GroupFinderInvite:
-                    GroupFinderInvite((C.GroupFinderInvite)p);
-                    return;
-                case (short)ClientPacketIds.DeleteGroupFinder:
-                    DeleteGroupFinder((C.DeleteGroupFinder)p);
                     return;
                 case (short)ClientPacketIds.TownRevive:
                     TownRevive();
@@ -409,6 +400,12 @@ namespace Server.MirNetwork
                 case (short)ClientPacketIds.ConsignItem:
                     ConsignItem((C.ConsignItem)p);
                     return;
+                case (short)ClientPacketIds.GroupFinderInvite:
+                    GroupFinderInvite((C.GroupFinderInvite)p);
+                    return;
+                case (short)ClientPacketIds.DeleteGroupFinder:
+                    DeleteGroupFinder((C.DeleteGroupFinder)p);
+                    return;
                 case (short)ClientPacketIds.AddGroupFinder:
                     AddGroupFinder((C.AddGroupFinder)p);
                     return;
@@ -417,6 +414,9 @@ namespace Server.MirNetwork
                     return;
                 case (short)ClientPacketIds.GroupFinderPage:
                     GroupFinderPage((C.GroupFinderPage)p);
+                    return;
+                case (short)ClientPacketIds.JoinMember:
+                    JoinMember((C.JoinMember)p);
                     return;
                 case (short)ClientPacketIds.MarketSearch:
                     MarketSearch((C.MarketSearch)p);
