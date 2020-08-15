@@ -48,7 +48,8 @@ namespace Client.MirScenes.Dialogs
                 Parent = this,
                 Size = new Size(38, 15),
                 MaxLength = 20,
-                CanLoseFocus = true
+                CanLoseFocus = true,
+                Text = "150"
             };
 
             MinimumLevelTextBox.KeyPress += MinimumLevelTextBox_KeyPress;
@@ -61,7 +62,8 @@ namespace Client.MirScenes.Dialogs
                 Parent = this,
                 Size = new Size(38, 15),
                 MaxLength = 20,
-                CanLoseFocus = true
+                CanLoseFocus = true,
+                Text = "2"
             };
 
             GroupSizeTextBox.KeyPress += GroupSizeTextBox_KeyPress;
