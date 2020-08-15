@@ -52,6 +52,7 @@ namespace Client.MirScenes.Dialogs
             };
 
             MinimumLevelTextBox.KeyPress += MinimumLevelTextBox_KeyPress;
+            MinimumLevelTextBox.TextBox.TextChanged += MinimumLevelTextBox_TextChanged;
 
             GroupSizeTextBox = new MirTextBox
             {
@@ -99,6 +100,20 @@ namespace Client.MirScenes.Dialogs
         }
 
         private void TextBox_TextChanged(object sender, EventArgs e)
+        private void MinimumLevelTextBox_TextChanged(object sender, EventArgs e)
+        {
+            var textBox = (TextBox)sender;
+            int minimumLevel;
+            if (int.TryParse(textBox.Text, out minimumLevel))
+            {
+                if (minimumLevel > 330)
+                {
+                    minimumLevel = 330;
+                }
+            }
+            textBox.Text = minimumLevel.ToString();
+            textBox.Select(textBox.Text.Length, 0);
+        }
         {
             var textBox = (TextBox)sender;
             int groupSize;
