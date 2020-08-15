@@ -72,7 +72,7 @@ namespace Client.MirScenes.Dialogs
                 Location = new Point(38, 178),
                 Parent = this,
                 Size = new Size(160, 15),
-                MaxLength = 20,
+                MaxLength = 24,
                 CanLoseFocus = true
             };
 
@@ -94,7 +94,7 @@ namespace Client.MirScenes.Dialogs
                 Location = new Point(38, 74),
                 Parent = this,
                 Size = new Size(160, 15),
-                MaxLength = 20,
+                MaxLength = 16,
                 CanLoseFocus = true
             };
 
