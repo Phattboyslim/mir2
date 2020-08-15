@@ -287,7 +287,6 @@ namespace ClientPackets
             writer.Write(To);
         }
     }
-
     public sealed class DepositRefineItem : Packet
     {
 
@@ -305,7 +304,6 @@ namespace ClientPackets
             writer.Write(To);
         }
     }
-
     public sealed class RetrieveRefineItem : Packet
     {
         public override short Index { get { return (short)ClientPacketIds.RetrieveRefineItem; } }
@@ -322,7 +320,6 @@ namespace ClientPackets
             writer.Write(To);
         }
     }
-
     public sealed class RefineCancel : Packet
     {
         public override short Index { get { return (short)ClientPacketIds.RefineCancel; } }
@@ -334,7 +331,6 @@ namespace ClientPackets
         {
         }
     }
-
     public sealed class RefineItem : Packet
     {
         public override short Index { get { return (short)ClientPacketIds.RefineItem; } }
@@ -350,7 +346,6 @@ namespace ClientPackets
             writer.Write(UniqueID);
         }
     }
-
     public sealed class CheckRefine : Packet
     {
         public override short Index { get { return (short)ClientPacketIds.CheckRefine; } }
@@ -366,7 +361,6 @@ namespace ClientPackets
             writer.Write(UniqueID);
         }
     }
-
     public sealed class ReplaceWedRing : Packet
     {
         public override short Index { get { return (short)ClientPacketIds.ReplaceWedRing; } }
@@ -382,8 +376,6 @@ namespace ClientPackets
             writer.Write(UniqueID);
         }
     }
-
-
     public sealed class DepositTradeItem : Packet
     {
         public override short Index { get { return (short)ClientPacketIds.DepositTradeItem; } }
@@ -400,7 +392,6 @@ namespace ClientPackets
             writer.Write(To);
         }
     }
-
     public sealed class RetrieveTradeItem : Packet
     {
         public override short Index { get { return (short)ClientPacketIds.RetrieveTradeItem; } }
@@ -918,7 +909,6 @@ namespace ClientPackets
             writer.Write(Location.Y);
         }
     }
-
     public sealed class SwitchGroup : Packet
     {
         public override short Index { get { return (short)ClientPacketIds.SwitchGroup; } }
@@ -938,20 +928,6 @@ namespace ClientPackets
         public override short Index { get { return (short)ClientPacketIds.AddMember; } }
 
         public string Name = string.Empty;
-        protected override void ReadPacket(BinaryReader reader)
-        {
-            Name = reader.ReadString();
-        }
-        protected override void WritePacket(BinaryWriter writer)
-        {
-            writer.Write(Name);
-        }
-    }
-    public sealed class JoinMember : Packet
-    {
-        public override short Index { get { return (short)ClientPacketIds.JoinMember; } }
-        public string Name = string.Empty;
-
         protected override void ReadPacket(BinaryReader reader)
         {
             Name = reader.ReadString();
@@ -989,6 +965,21 @@ namespace ClientPackets
             writer.Write(AcceptInvite);
         }
     }
+
+    public sealed class JoinMember : Packet
+    {
+        public override short Index { get { return (short)ClientPacketIds.JoinMember; } }
+        public string Name = string.Empty;
+
+        protected override void ReadPacket(BinaryReader reader)
+        {
+            Name = reader.ReadString();
+        }
+        protected override void WritePacket(BinaryWriter writer)
+        {
+            writer.Write(Name);
+        }
+    }
     public sealed class GroupFinderInvite : Packet
     {
         public override short Index { get { return (short)ClientPacketIds.GroupFinderInvite; } }
@@ -1019,6 +1010,67 @@ namespace ClientPackets
             writer.Write(Name);
         }
     }
+    public sealed class AddGroupFinder : Packet
+    {
+        public override short Index { get { return (short)ClientPacketIds.AddGroupFinder; } }
+
+        public Guid Id;
+        public int MinimumLevel;
+        public string PlayerName;
+        public string Title;
+        public int PlayerLimit;
+        public string Description;
+        public DateTime Created;
+
+        protected override void ReadPacket(BinaryReader reader)
+        {
+            Id = new Guid(reader.ReadString());
+            MinimumLevel = reader.ReadInt32();
+            PlayerName = reader.ReadString();
+            Title = reader.ReadString();
+            PlayerLimit = reader.ReadInt32();
+            Description = reader.ReadString();
+            Created = DateTime.FromBinary(reader.ReadInt64());
+        }
+        protected override void WritePacket(BinaryWriter writer)
+        {
+            writer.Write(Id.ToString());
+            writer.Write(MinimumLevel);
+            writer.Write(PlayerName);
+            writer.Write(Title);
+            writer.Write(PlayerLimit);
+            writer.Write(Description);
+            writer.Write(Created.ToBinary());
+        }
+    }
+    public sealed class GroupFinderRefresh : Packet
+    {
+        public override short Index { get { return (short)ClientPacketIds.RefreshGroupFinder; } }
+
+        protected override void ReadPacket(BinaryReader reader)
+        {
+        }
+
+        protected override void WritePacket(BinaryWriter writer)
+        {
+        }
+    }
+    public sealed class GroupFinderPage : Packet
+    {
+        public override short Index { get { return (short)ClientPacketIds.GroupFinderPage; } }
+        public int Page;
+
+        protected override void ReadPacket(BinaryReader reader)
+        {
+            Page = reader.ReadInt32();
+        }
+        protected override void WritePacket(BinaryWriter writer)
+        {
+            writer.Write(Page);
+        }
+    }
+
+
     public sealed class MarriageRequest : Packet
     {
         public override short Index { get { return (short)ClientPacketIds.MarriageRequest; } }
@@ -1249,65 +1301,6 @@ namespace ClientPackets
         {
             writer.Write(UniqueID);
             writer.Write(Price);
-        }
-    }
-    public sealed class AddGroupFinder : Packet
-    {
-        public override short Index { get { return (short)ClientPacketIds.AddGroupFinder; } }
-
-        public Guid Id;
-        public int MinimumLevel;
-        public string PlayerName;
-        public string Title;
-        public int PlayerLimit;
-        public string Description;
-        public DateTime Created;
-
-        protected override void ReadPacket(BinaryReader reader)
-        {
-            Id = new Guid(reader.ReadString());
-            MinimumLevel = reader.ReadInt32();
-            PlayerName = reader.ReadString();
-            Title = reader.ReadString();
-            PlayerLimit = reader.ReadInt32();
-            Description = reader.ReadString();
-            Created = DateTime.FromBinary(reader.ReadInt64());
-        }
-        protected override void WritePacket(BinaryWriter writer)
-        {
-            writer.Write(Id.ToString());
-            writer.Write(MinimumLevel);
-            writer.Write(PlayerName);
-            writer.Write(Title);
-            writer.Write(PlayerLimit);
-            writer.Write(Description);
-            writer.Write(Created.ToBinary());
-        }
-    }
-    public sealed class GroupFinderRefresh : Packet
-    {
-        public override short Index { get { return (short)ClientPacketIds.RefreshGroupFinder; } }
-
-        protected override void ReadPacket(BinaryReader reader)
-        {
-        }
-
-        protected override void WritePacket(BinaryWriter writer)
-        {
-        }
-    }
-    public sealed class GroupFinderPage : Packet
-    {
-        public override short Index { get { return (short)ClientPacketIds.GroupFinderPage; } }
-        public int Page;
-
-        protected override void ReadPacket(BinaryReader reader)
-        {
-            Page = reader.ReadInt32();
-        }
-        protected override void WritePacket(BinaryWriter writer)
-        {
-            writer.Write(Page);
         }
     }
     public sealed class MarketSearch : Packet

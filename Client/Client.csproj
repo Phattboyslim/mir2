@@ -189,6 +189,7 @@
     <Compile Include="MirScenes\Dialogs\FriendDialog.cs" />
     <Compile Include="MirScenes\Dialogs\GameshopDialog.cs" />
     <Compile Include="MirScenes\Dialogs\GroupDialog.cs" />
+    <Compile Include="MirScenes\Dialogs\GroupFinderButtonDialog.cs" />
     <Compile Include="MirScenes\Dialogs\GroupFinderDialog.cs" />
     <Compile Include="MirScenes\Dialogs\GroupFinderFormDialog.cs" />
     <Compile Include="MirScenes\Dialogs\GuildDialog.cs" />

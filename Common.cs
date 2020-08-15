@@ -1561,14 +1561,16 @@ public enum ClientPacketIds : short
     Magic,
     SwitchGroup,
     AddMember,
-    JoinMember,
     DellMember,
     GroupInvite,
+
+    JoinMember,
     GroupFinderInvite,
     AddGroupFinder,
     DeleteGroupFinder,
     RefreshGroupFinder,
     GroupFinderPage,
+
     TownRevive,
     SpellToggle,
     ConsignItem,
@@ -4638,20 +4640,20 @@ public abstract class Packet
                 return new C.SwitchGroup();
             case (short)ClientPacketIds.AddMember:
                 return new C.AddMember();
-            case (short)ClientPacketIds.JoinMember:
-                return new C.JoinMember();
             case (short)ClientPacketIds.DellMember:
                 return new C.DelMember();
             case (short)ClientPacketIds.GroupInvite:
                 return new C.GroupInvite();
-            case (short)ClientPacketIds.GroupFinderInvite:
-                return new C.GroupFinderInvite();
             case (short)ClientPacketIds.TownRevive:
                 return new C.TownRevive();
             case (short)ClientPacketIds.SpellToggle:
                 return new C.SpellToggle();
             case (short)ClientPacketIds.ConsignItem:
                 return new C.ConsignItem();
+            case (short)ClientPacketIds.JoinMember:
+                return new C.JoinMember();
+            case (short)ClientPacketIds.GroupFinderInvite:
+                return new C.GroupFinderInvite();
             case (short)ClientPacketIds.AddGroupFinder:
                 return new C.AddGroupFinder();
             case (short)ClientPacketIds.RefreshGroupFinder:

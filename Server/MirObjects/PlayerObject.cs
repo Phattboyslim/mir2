@@ -260,7 +260,6 @@ namespace Server.MirObjects
         public string MatchName;
         public ItemType MatchType;
         public int PageSent;
-        public int GroupFinderPageSent;
         public List<AuctionInfo> Search = new List<AuctionInfo>();
         public List<ItemSets> ItemSets = new List<ItemSets>();
         public List<EquipmentSlot> MirSet = new List<EquipmentSlot>();
@@ -316,6 +315,7 @@ namespace Server.MirObjects
         public PlayerObject GroupInvitation;
         public PlayerObject TradeInvitation;
 
+        public int GroupFinderPageSent;
         public PlayerObject GroupFinderInvitation;
 
         public PlayerObject TradePartner = null;
@@ -14594,82 +14594,7 @@ namespace Server.MirObjects
 
             Enqueue(p);
         }
-        public void GroupFinderRefresh()
-        {
-            var eligibleGroupFinderDetails = new List<GroupFinderDetail>();
-            var ineligibleGroupFinderInfos = new List<GroupFinderInfo>();
 
-            Envir.GroupFinderInfos.ForEach(groupFinderInfo =>
-            {
-                var player = Envir.GetPlayer(groupFinderInfo.PlayerName);
-                if (player != null)
-                {
-                    var playerGroupMembers = player.GroupMembers;
-                    var playerGroupMemberCount = playerGroupMembers != null ? playerGroupMembers.Count() : 1;
-
-                    eligibleGroupFinderDetails.Add(new GroupFinderDetail
-                    {
-                        Id = groupFinderInfo.Id,
-                        PlayerName = groupFinderInfo.PlayerName,
-                        MinimumLevel = groupFinderInfo.MinimumLevel,
-                        Title = groupFinderInfo.Title,
-                        Created = groupFinderInfo.Created,
-                        PlayerLimit = groupFinderInfo.PlayerLimit,
-                        Description = groupFinderInfo.Description,
-                        GroupMemberCount = playerGroupMemberCount,
-                        GroupMemberNames = playerGroupMembers != null && playerGroupMemberCount > 1 ? playerGroupMembers.Select(member => member.Name).ToList() : new List<string>()
-                    });
-                }
-                
-            });
-            
-            if (ineligibleGroupFinderInfos.Count > 0)
-            {
-                ineligibleGroupFinderInfos.ForEach(info =>
-                {
-                    Envir.GroupFinderInfos.Remove(info);
-                });
-            }
-
-            Enqueue(new S.GroupFinderPacket
-            {
-                Listings = eligibleGroupFinderDetails,
-                Pages = (eligibleGroupFinderDetails.Count - 1) / 10 + 1
-            });
-        }
-
-        public void AddGroupFinder(Guid id, string playerName, int minimumLevel, string title, DateTime created, int playerLimit, string description)
-        {
-            AddGroupFinder groupFinderInfo = new AddGroupFinder
-            {
-                Id = id,
-                PlayerName = playerName,
-                MinimumLevel = minimumLevel,
-                Title = title,
-                Created = created,
-                PlayerLimit = playerLimit,
-                Description = description
-            };
-
-            Envir.GroupFinderInfos.Add(new GroupFinderInfo(groupFinderInfo));
-
-            foreach (var player in Envir.Players)
-            {
-                player.ReceiveChat($"{playerName} is looking for group. MinLvl: {minimumLevel}, GroupSize: {playerLimit}, Title: {title}, Description: {description}", ChatType.Announcement);
-            }
-        }
-
-        public void GroupFinderPage(int page)
-        {
-            if (Dead || Envir.Time < SearchTime) return;
-
-            if (page <= GroupFinderPageSent) return;
-
-            SearchTime = Envir.Time + Globals.SearchDelay;
-
-            GroupFinderPageSent = page;
-
-        }
         public bool Match(AuctionInfo info)
         {
             if (Envir.Now >= info.ConsignmentDate.AddDays(Globals.ConsignmentLength) && !info.Sold)
@@ -15432,6 +15357,7 @@ namespace Server.MirObjects
             player.Enqueue(new S.GroupInvite { Name = Name });
             player.GroupInvitation = this;
         }
+
         public void JoinMember(string name)
         {
             if (GroupMembers != null)
@@ -15495,6 +15421,142 @@ namespace Server.MirObjects
 
             player.Enqueue(new S.GroupFinderRequest { Name = Name });
             player.GroupFinderInvitation = this;
+        }
+        public void GroupFinderRefresh()
+        {
+            var eligibleGroupFinderDetails = new List<GroupFinderDetail>();
+            var ineligibleGroupFinderInfos = new List<GroupFinderInfo>();
+
+            Envir.GroupFinderInfos.ForEach(groupFinderInfo =>
+            {
+                var player = Envir.GetPlayer(groupFinderInfo.PlayerName);
+                if (player != null)
+                {
+                    var playerGroupMembers = player.GroupMembers;
+                    var playerGroupMemberCount = playerGroupMembers != null ? playerGroupMembers.Count() : 1;
+
+                    eligibleGroupFinderDetails.Add(new GroupFinderDetail
+                    {
+                        Id = groupFinderInfo.Id,
+                        PlayerName = groupFinderInfo.PlayerName,
+                        MinimumLevel = groupFinderInfo.MinimumLevel,
+                        Title = groupFinderInfo.Title,
+                        Created = groupFinderInfo.Created,
+                        PlayerLimit = groupFinderInfo.PlayerLimit,
+                        Description = groupFinderInfo.Description,
+                        GroupMemberCount = playerGroupMemberCount,
+                        GroupMemberNames = playerGroupMembers != null && playerGroupMemberCount > 1 ? playerGroupMembers.Select(member => member.Name).ToList() : new List<string>()
+                    });
+                }
+
+            });
+
+            if (ineligibleGroupFinderInfos.Count > 0)
+            {
+                ineligibleGroupFinderInfos.ForEach(info =>
+                {
+                    Envir.GroupFinderInfos.Remove(info);
+                });
+            }
+
+            Enqueue(new S.GroupFinderPacket
+            {
+                Listings = eligibleGroupFinderDetails,
+                Pages = (eligibleGroupFinderDetails.Count - 1) / 10 + 1
+            });
+        }
+        public void AddGroupFinder(Guid id, string playerName, int minimumLevel, string title, DateTime created, int playerLimit, string description)
+        {
+            AddGroupFinder groupFinderInfo = new AddGroupFinder
+            {
+                Id = id,
+                PlayerName = playerName,
+                MinimumLevel = minimumLevel,
+                Title = title,
+                Created = created,
+                PlayerLimit = playerLimit,
+                Description = description
+            };
+
+            Envir.GroupFinderInfos.Add(new GroupFinderInfo(groupFinderInfo));
+
+            foreach (var player in Envir.Players)
+            {
+                player.ReceiveChat($"{playerName} is looking for group. MinLvl: {minimumLevel}, GroupSize: {playerLimit}, Title: {title}, Description: {description}", ChatType.Announcement);
+            }
+        }
+        public void GroupFinderPage(int page)
+        {
+            if (Dead || Envir.Time < SearchTime) return;
+
+            if (page <= GroupFinderPageSent) return;
+
+            SearchTime = Envir.Time + Globals.SearchDelay;
+
+            GroupFinderPageSent = page;
+
+        }
+        public void GroupFinderInvite(bool accept, string name)
+        {
+            PlayerObject player = Envir.GetPlayer(name);
+            
+            if (player == null)
+            {
+                ReceiveChat($"Couldnt find {name} anymore. Offline?", ChatType.System);
+                GroupFinderInvitation = null;
+                return;
+            }
+
+            if (!accept)
+            {
+                player.ReceiveChat(Name + " has declined your group invite.", ChatType.System);
+                GroupFinderInvitation = null;
+                return;
+            }
+
+            if (GroupFinderInvitation == null)
+            {
+                ReceiveChat("This should not happen, but it did anyway.", ChatType.System);
+                return;
+            }
+
+            if (GroupMembers == null) // When the first player joins
+            {
+                GroupMembers = new List<PlayerObject> { this };
+                Enqueue(new S.AddMember { Name = Name });
+            }
+
+            GroupFinderInvitation = null;
+
+            player.Enqueue(new S.AddMember { Name = player.Name });
+
+            GroupMembers.ForEach(member =>
+            {
+                player.Enqueue(new S.AddMember { Name = member.Name });
+                member.Enqueue(new S.AddMember { Name = player.Name });
+                if (player.CurrentMap == member.CurrentMap && Functions.InRange(player.CurrentLocation, member.CurrentLocation, Globals.DataRange))
+                {
+                    byte time = Math.Min(byte.MaxValue, (byte)Math.Max(5, (RevTime - Envir.Time) / 1000));
+                    player.Enqueue(new S.ObjectHealth { ObjectID = member.ObjectID, Percent = member.PercentHealth, Expire = time });
+                    member.Enqueue(new S.ObjectHealth { ObjectID = player.ObjectID, Percent = player.PercentHealth, Expire = time });
+                    member.Pets.ForEach(pet =>
+                    {
+                        player.Enqueue(new S.ObjectHealth { ObjectID = pet.ObjectID, Percent = pet.PercentHealth, Expire = time });
+                    });
+                };
+            });
+
+            GroupMembers.Add(player);
+
+            player.GroupMembers = GroupMembers;
+          
+        }
+        public void DeleteGroupFinder(string name)
+        {
+            var info = Envir.GroupFinderInfos.First(x => x.PlayerName == name);
+
+            if (info != null)
+                Envir.GroupFinderInfos.Remove(info);
         }
 
         public void DelMember(string name)
@@ -15658,68 +15720,6 @@ namespace Server.MirObjects
                 Pets[j].BroadcastHealthChange();
 
             Enqueue(p);
-        }
-        public void GroupFinderInvite(bool accept, string name)
-        {
-            PlayerObject player = Envir.GetPlayer(name);
-            
-            if (player == null)
-            {
-                ReceiveChat($"Couldnt find {name} anymore. Offline?", ChatType.System);
-                GroupFinderInvitation = null;
-                return;
-            }
-
-            if (!accept)
-            {
-                player.ReceiveChat(Name + " has declined your group invite.", ChatType.System);
-                GroupFinderInvitation = null;
-                return;
-            }
-
-            if (GroupFinderInvitation == null)
-            {
-                ReceiveChat("This should not happen, but it did anyway.", ChatType.System);
-                return;
-            }
-
-            if (GroupMembers == null) // When the first player joins
-            {
-                GroupMembers = new List<PlayerObject> { this };
-                Enqueue(new S.AddMember { Name = Name });
-            }
-
-            GroupFinderInvitation = null;
-
-            player.Enqueue(new S.AddMember { Name = player.Name });
-
-            GroupMembers.ForEach(member =>
-            {
-                player.Enqueue(new S.AddMember { Name = member.Name });
-                member.Enqueue(new S.AddMember { Name = player.Name });
-                if (player.CurrentMap == member.CurrentMap && Functions.InRange(player.CurrentLocation, member.CurrentLocation, Globals.DataRange))
-                {
-                    byte time = Math.Min(byte.MaxValue, (byte)Math.Max(5, (RevTime - Envir.Time) / 1000));
-                    player.Enqueue(new S.ObjectHealth { ObjectID = member.ObjectID, Percent = member.PercentHealth, Expire = time });
-                    member.Enqueue(new S.ObjectHealth { ObjectID = player.ObjectID, Percent = player.PercentHealth, Expire = time });
-                    member.Pets.ForEach(pet =>
-                    {
-                        player.Enqueue(new S.ObjectHealth { ObjectID = pet.ObjectID, Percent = pet.PercentHealth, Expire = time });
-                    });
-                };
-            });
-
-            GroupMembers.Add(player);
-
-            player.GroupMembers = GroupMembers;
-          
-        }
-        public void DeleteGroupFinder(string name)
-        {
-            var info = Envir.GroupFinderInfos.First(x => x.PlayerName == name);
-
-            if (info != null)
-                Envir.GroupFinderInfos.Remove(info);
         }
         #endregion
 

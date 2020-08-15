@@ -1214,12 +1214,6 @@ namespace Server.MirNetwork
 
             Player.AddMember(p.Name);
         }
-        private void JoinMember(C.JoinMember p)
-        {
-            if (Stage != GameStage.Game) return;
-
-            Player.JoinMember(p.Name);
-        }
 
         private void DelMember(C.DelMember p)
         {
@@ -1246,13 +1240,25 @@ namespace Server.MirNetwork
 
             Player.ConsignItem(p.UniqueID, p.Price);
         }
+        private void GroupInvite(C.GroupInvite p)
+        {
+            if (Stage != GameStage.Game) return;
+
+            Player.GroupInvite(p.AcceptInvite);
+        }
+
+        private void JoinMember(C.JoinMember p)
+        {
+            if (Stage != GameStage.Game) return;
+
+            Player.JoinMember(p.Name);
+        }
         private void AddGroupFinder(C.AddGroupFinder p)
         {
             if (Stage != GameStage.Game) return;
 
             Player.AddGroupFinder(p.Id, p.PlayerName, p.MinimumLevel, p.Title, p.Created, p.PlayerLimit, p.Description);
         }
-
         private void DeleteGroupFinder(C.DeleteGroupFinder p)
         {
             if (Stage != GameStage.Game) return;
@@ -1270,12 +1276,6 @@ namespace Server.MirNetwork
             if (Stage != GameStage.Game) return;
 
             Player.GroupFinderPage(p.Page);
-        }
-        private void GroupInvite(C.GroupInvite p)
-        {
-            if (Stage != GameStage.Game) return;
-
-            Player.GroupInvite(p.AcceptInvite);
         }
         private void GroupFinderInvite(C.GroupFinderInvite p)
         {
