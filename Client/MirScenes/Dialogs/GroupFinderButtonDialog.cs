@@ -41,9 +41,10 @@ namespace Client.MirScenes.Dialogs
                 }
                 else
                 {
-                    var groupDetailFound = GameScene.Scene.GroupFinderDialog.GroupFinderDetails.Any(x => x.PlayerName == GameScene.User.Name || x.GroupMemberNames.Any(name => name == GameScene.User.Name));
+                    var userHasGroupFinder = GameScene.Scene.GroupFinderDialog.GroupFinderDetails.Any(x => x.PlayerName == GameScene.User.Name);
+                    var userIsInGroupFinder = GameScene.Scene.GroupFinderDialog.GroupFinderDetails.Any(x=> x.GroupMemberNames.Any(name => name == GameScene.User.Name));
 
-                    GameScene.Scene.GroupFinderDialog.Show(!groupDetailFound);
+                    GameScene.Scene.GroupFinderDialog.Show(!userHasGroupFinder && !userIsInGroupFinder);
                 }
             };
         }
