@@ -1627,6 +1627,7 @@ public enum ClientPacketIds : short
     ReadMail,
     CollectParcel,
     DeleteMail,
+    DeleteAllReadMail,
     LockMail,
     MailLockedItem,
     MailCost,
@@ -4762,6 +4763,8 @@ public abstract class Packet
                 return new C.CollectParcel();
             case (short)ClientPacketIds.DeleteMail:
                 return new C.DeleteMail();
+            case (short)ClientPacketIds.DeleteAllReadMail:
+                return new C.DeleteAllReadMail();
             case (short)ClientPacketIds.LockMail:
                 return new C.LockMail();
             case (short)ClientPacketIds.MailLockedItem:

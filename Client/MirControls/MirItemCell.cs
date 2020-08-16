@@ -8,6 +8,8 @@ using Client.MirScenes;
 using Client.MirSounds;
 using Client.MirScenes.Dialogs;
 using C = ClientPackets;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Client.MirControls
 {
@@ -211,7 +213,14 @@ namespace Client.MirControls
             switch (e.Button)
             {
                 case MouseButtons.Right:
-                    UseItem();
+                    if (GameScene.Scene.StorageDialog.Visible && GameScene.Scene.InventoryDialog.Visible)
+                    {
+                        RightClickFromInventoryToStorage();
+                        return;
+                    } else
+                    {
+                        UseItem();
+                    }
                     break;
                 case MouseButtons.Left:
                     if (Item != null && GameScene.SelectedCell == null)
@@ -2095,6 +2104,57 @@ namespace Client.MirControls
             if (CountLabel != null && !CountLabel.IsDisposed)
                 CountLabel.Dispose();
             CountLabel = null;
+        }
+        private void RightClickFromInventoryToStorage()
+        {
+            if (Item == null)
+            {
+                return;
+            }
+
+            var inventoryGridItems = new List<MirItemCell>(GameScene.Scene.InventoryDialog.Grid);
+            var storageGridItems = new List<MirItemCell>(GameScene.Scene.StorageDialog.Grid);
+
+            int itemSlot;
+
+            if (inventoryGridItems.Any(gridItem => gridItem.Item != null && gridItem.Item.UniqueID == Item.UniqueID))
+            {
+                if (storageGridItems.Where(item => item.Item != null).Count() == storageGridItems.Count)
+                {
+                    GameScene.Scene.ChatDialog.ReceiveChat("Storage is full", ChatType.System);
+                    return;
+                }
+
+                itemSlot = inventoryGridItems.First(gridItem => gridItem.Item != null && gridItem.Item.UniqueID == Item.UniqueID).ItemSlot;
+
+                for (int x = 0; x < storageGridItems.Count; x++)
+                {
+                    if (storageGridItems[x].Item == null)
+                    {
+                        Network.Enqueue(new C.StoreItem { From = itemSlot, To = x });
+                        return;
+                    }
+                }
+            }
+            else if (storageGridItems.Any(gridItem => gridItem.Item != null && gridItem.Item.UniqueID == Item.UniqueID))
+            {
+                if (inventoryGridItems.Where(item => item.Item != null).Count() == inventoryGridItems.Count)
+                {
+                    GameScene.Scene.ChatDialog.ReceiveChat("Inventory is full", ChatType.System);
+                    return;
+                }
+
+                itemSlot = storageGridItems.First(gridItem => gridItem.Item != null && gridItem.Item.UniqueID == Item.UniqueID).ItemSlot;
+
+                for (int x = 0; x < inventoryGridItems.Count; x++)
+                {
+                    if (inventoryGridItems[x].Item == null)
+                    {
+                        Network.Enqueue(new C.TakeBackItem { From = itemSlot, To = inventoryGridItems[x].ItemSlot });
+                        return;
+                    }
+                }
+            }
         }
     }
 }

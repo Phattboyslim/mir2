@@ -4555,7 +4555,6 @@ namespace Client.MirScenes
 
             messageBox.Show();
         }
-
         private void DeleteGroupFinder(S.DeleteGroupFinder p)
         {
             Network.Enqueue(new C.DeleteGroupFinder { Name = p.Name });

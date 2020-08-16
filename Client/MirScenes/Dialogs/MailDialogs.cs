@@ -19,7 +19,7 @@ namespace Client.MirScenes.Dialogs
 
         MirLabel PageLabel;
         MirButton PreviousButton, NextButton;
-        MirButton SendButton, ReplyButton, ReadButton, DeleteButton, BlockListButton, BugReportButton;
+        MirButton SendButton, ReplyButton, ReadButton, DeleteButton, BlockListButton, BugReportButton, DeleteAllReadMailButton;
 
         public MailItemRow[] Rows = new MailItemRow[10];
 
@@ -243,9 +243,28 @@ namespace Client.MirScenes.Dialogs
                 Sound = SoundList.ButtonA,
                 Hint = "Report Bug"
             };
+
+            DeleteAllReadMailButton = new MirButton
+            {
+                Index = 557,
+                HoverIndex = 558,
+                PressedIndex = 559,
+                Library = Libraries.Prguse,
+                Parent = this,
+                Location = new Point(237, 414),
+                Sound = SoundList.ButtonA,
+                Hint = "Delete all"
+            };
+
+            DeleteAllReadMailButton.Click += DeleteAllReadMailButton_Click;
             #endregion
 
-            
+
+        }
+
+        private void DeleteAllReadMailButton_Click(object sender, EventArgs e)
+        {
+            Network.Enqueue(new C.DeleteAllReadMail ());
         }
 
         public void Reset()

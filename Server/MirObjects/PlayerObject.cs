@@ -15425,7 +15425,16 @@ namespace Server.MirObjects
         public void GroupFinderRefresh()
         {
             var eligibleGroupFinderDetails = new List<GroupFinderDetail>();
-            var ineligibleGroupFinderInfos = new List<GroupFinderInfo>();
+
+            var ineligibleGroupFinderInfos = Envir.GroupFinderInfos.Where(x=> x.Created.AddMinutes(5) <= DateTime.Now).ToList();
+
+            if (ineligibleGroupFinderInfos != null && ineligibleGroupFinderInfos.Count > 0)
+            {
+                ineligibleGroupFinderInfos.ForEach(info =>
+                {
+                    Envir.GroupFinderInfos.Remove(info);
+                });
+            }
 
             Envir.GroupFinderInfos.ForEach(groupFinderInfo =>
             {
@@ -15448,17 +15457,9 @@ namespace Server.MirObjects
                         GroupMemberNames = playerGroupMembers != null && playerGroupMemberCount > 1 ? playerGroupMembers.Select(member => member.Name).ToList() : new List<string>()
                     });
                 }
-
             });
 
-            if (ineligibleGroupFinderInfos.Count > 0)
-            {
-                ineligibleGroupFinderInfos.ForEach(info =>
-                {
-                    Envir.GroupFinderInfos.Remove(info);
-                });
-            }
-
+            
             Enqueue(new S.GroupFinderPacket
             {
                 Listings = eligibleGroupFinderDetails,
@@ -17764,6 +17765,22 @@ namespace Server.MirObjects
             if (mail == null) return;
 
             Info.Mail.Remove(mail);
+
+            GetMail();
+        }
+
+        public void DeleteAllReadMail()
+        {
+            List<MailInfo> currentReadMails = Info.Mail.Where(mail => mail.Opened).ToList();
+
+            currentReadMails.ForEach(mail =>
+            {
+                if (mail == null) return;
+
+                if (mail.Items.Count > 0) return;
+
+                Info.Mail.Remove(mail);
+            });
 
             GetMail();
         }

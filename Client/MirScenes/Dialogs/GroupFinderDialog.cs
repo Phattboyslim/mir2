@@ -36,6 +36,8 @@ namespace Client.MirScenes.Dialogs
             Sort = true;
             Movable = true;
 
+            Location = Center;
+
             TitleLabel = new MirImageControl
             {
                 Index = 24,
@@ -198,6 +200,8 @@ namespace Client.MirScenes.Dialogs
         public void Hide()
         {
             if (!Visible) return;
+            if (GameScene.Scene.GroupFinderFormDialog.Visible)
+                GameScene.Scene.GroupFinderFormDialog.Hide();
             Visible = false;
         }
         public void Show(bool showCreateButton)
@@ -207,6 +211,17 @@ namespace Client.MirScenes.Dialogs
             CreateButton.Visible = showCreateButton;
             Network.Enqueue(new C.GroupFinderRefresh());
 
+        }
+        public override void OnKeyPress(KeyPressEventArgs e)
+        {
+            base.OnKeyPress(e);
+            switch (e.KeyChar)
+            {
+                case (char)Keys.Escape:
+                    e.Handled = true;
+                    Hide();
+                    break;
+            }
         }
     }
     
@@ -355,7 +370,7 @@ namespace Client.MirScenes.Dialogs
             TitleLabel.Text = listing.Title;
             DescriptionLabel.Text = listing.Description;
             CreatedLabel.Text = listing.Created.ToString("dd/MM/yy H:mm:ss");
-            PlayerLimitLabel.Text = $"{GroupMemberCount}/{listing.PlayerLimit}";
+            PlayerLimitLabel.Text = GroupMemberCount > 0 ? $"{GroupMemberCount}/{listing.PlayerLimit}" : "OFFLINE";
             JoinGroupButton.Visible = listing.PlayerName != GameScene.User.Name && GroupMemberCount < listing.PlayerLimit && !listing.GroupMemberNames.Any(x => x == GameScene.User.Name);
             CloseButton.Visible = listing.PlayerName == GameScene.User.Name;
             Visible = true;

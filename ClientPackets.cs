@@ -1931,7 +1931,18 @@ public sealed class AwakeningNeedMaterials : Packet
             writer.Write(MailID);
         }
     }
+    public sealed class DeleteAllReadMail : Packet
+    {
+        public override short Index { get { return (short)ClientPacketIds.DeleteAllReadMail; } }
 
+        protected override void ReadPacket(BinaryReader reader)
+        {
+        }
+
+        protected override void WritePacket(BinaryWriter writer)
+        {
+        }
+    }
     public sealed class LockMail : Packet
     {
         public override short Index { get { return (short)ClientPacketIds.LockMail; } }

@@ -8,6 +8,7 @@ using Server.MirObjects;
 using C = ClientPackets;
 using S = ServerPackets;
 using System.Linq;
+using ClientPackets;
 
 namespace Server.MirNetwork
 {
@@ -567,6 +568,9 @@ namespace Server.MirNetwork
                     break;
                 case (short)ClientPacketIds.DeleteMail:
                     DeleteMail((C.DeleteMail)p);
+                    break;
+                case (short)ClientPacketIds.DeleteAllReadMail:
+                    DeleteAllReadMail((C.DeleteAllReadMail)p);
                     break;
                 case (short)ClientPacketIds.LockMail:
                     LockMail((C.LockMail)p);
@@ -1635,7 +1639,12 @@ namespace Server.MirNetwork
 
             Player.DeleteMail(p.MailID);
         }
+        public void DeleteAllReadMail(C.DeleteAllReadMail p)
+        {
+            if (Stage != GameStage.Game) return;
 
+            Player.DeleteAllReadMail();
+        }
         public void LockMail(C.LockMail p)
         {
             if (Stage != GameStage.Game) return;
