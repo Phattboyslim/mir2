@@ -3080,8 +3080,7 @@ namespace Client.MirObjects
 
                                     #endregion
 
-                                    #region SoulShield
-
+                                    #region HolyTrinity
                                     case Spell.SoulShield:
                                         SoundManager.PlaySound(20000 + (ushort)Spell * 10);
                                         missile = CreateProjectile(1160, Libraries.Magic, true, 3, 30, 7);
@@ -3094,10 +3093,6 @@ namespace Client.MirObjects
                                         };
                                         break;
 
-                                    #endregion
-
-                                    #region BlessedArmour
-
                                     case Spell.BlessedArmour:
                                         SoundManager.PlaySound(20000 + (ushort)Spell * 10);
                                         missile = CreateProjectile(1160, Libraries.Magic, true, 3, 30, 7);
@@ -3108,6 +3103,11 @@ namespace Client.MirObjects
                                             MapControl.Effects.Add(new Effect(Libraries.Magic, 1340, 15, 1200, TargetPoint));
                                             SoundManager.PlaySound(20000 + (ushort)Spell.BlessedArmour * 10 + 1);
                                         };
+                                        break;
+
+                                    case Spell.UltimateEnhancer:
+                                        if (ob != null && ob != User)
+                                            ob.Effects.Add(new Effect(Libraries.Magic2, 160, 15, 1000, ob));
                                         break;
 
                                     #endregion
@@ -3328,15 +3328,6 @@ namespace Client.MirObjects
                                     case Spell.SummonHolyDeva:
                                         Effects.Add(new Effect(Libraries.Magic, 1500, 10, Frame.Count * FrameInterval, this));
                                         SoundManager.PlaySound(20000 + (ushort)Spell * 10);
-                                        break;
-
-                                    #endregion
-
-                                    #region UltimateEnhancer
-
-                                    case Spell.UltimateEnhancer:
-                                        if (ob != null && ob != User)
-                                            ob.Effects.Add(new Effect(Libraries.Magic2, 160, 15, 1000, ob));
                                         break;
 
                                     #endregion
