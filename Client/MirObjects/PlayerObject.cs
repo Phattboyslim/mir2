@@ -3081,6 +3081,24 @@ namespace Client.MirObjects
                                     #endregion
 
                                     #region HolyTrinity
+
+                                    case Spell.HolyTrinity:
+                                        SoundManager.PlaySound(20000 + (ushort)Spell * 10);
+                                        missile = CreateProjectile(1160, Libraries.Magic, true, 3, 30, 7);
+                                        missile.Explode = true;
+
+                                        missile.Complete += (sender, args) =>
+                                        {
+                                            MapControl.Effects.AddRange(new List<Effect>
+                                            {
+                                                new Effect(Libraries.Magic, 1320, 15, 1200, TargetPoint),
+                                                new Effect(Libraries.Magic, 1340, 15, 1200, TargetPoint),
+                                                new Effect(Libraries.Magic2, 160, 15, 1000, ob)
+                                            });
+                                            SoundManager.PlaySound(20000 + (ushort)Spell.SoulShield * 10 + 1);
+                                        };
+                                        break;
+
                                     case Spell.SoulShield:
                                         SoundManager.PlaySound(20000 + (ushort)Spell * 10);
                                         missile = CreateProjectile(1160, Libraries.Magic, true, 3, 30, 7);

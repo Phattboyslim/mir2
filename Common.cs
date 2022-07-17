@@ -1151,7 +1151,10 @@ public enum Spell : byte
     MapLightning = 202,
     MapLava = 203,
     MapQuake1 = 204,
-    MapQuake2 = 205
+    MapQuake2 = 205,
+
+    // Banshee Spells,
+    HolyTrinity
 }
 
 public enum SpellEffect : byte
